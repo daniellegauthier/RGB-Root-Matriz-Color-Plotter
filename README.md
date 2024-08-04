@@ -42,7 +42,7 @@ This project requires knowledge in:
 Danielle Gauthier
 
 ## License
-This project is licensed under the MIT License.
+This project is licensed under the GNU General Public License v3.0.
 
 ## Acknowledgements
 This project is an evolution of the original RGB Root Matriz Color Knotter Map, continuing to explore the intersection of technology, art, and ecofeminist perspectives.
