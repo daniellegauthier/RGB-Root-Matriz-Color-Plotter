@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The RGB Root Matriz Color Plotter</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="sketch.js"></script>
+</head>
+<body class="container">
+
+    <h1 class="my-4">The RGB Root Matriz Color Plotter</h1>
+    <p>by Danielle Gauthier</p>
+    <p>This program is inspired by the ecofeminist pluriverse and feminist perspectives on family-making and crafting. It is used for telepathic communication and other forms of poetic linguistic navigation programming. To use this deterministic model for sequence optimization:</p>
+  <ol>
+    <li>Enter an obstacle in the first textbox.</li>
+    <li>Select the type of "problem" you have by indicating the solution you want to find.</li>
+    <li>Answer the reference questions.</li>
+    <li>Hit Expose and you will get results.</li>
+  </ol>
+    
+    <form id="colorForm">
+     
+
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Color</th>
+                        <th>RGB Coordinates</th>
+                        <th>Direction</th>
+                        <th>Input</th>
+                    </tr>
+                </thead>
+                <tbody>
+          <tr>
+            <th>Sequence</th>
+            <th>Navigation</th>
+            <th>Key</th>
+            <th><input id="command" class="form-control" rows="1" value="What is the problem?"></th>
+            
+            <tr>
+                        <td colspan="4">
+                            <div class="form-group">
+                                <label for="problem">Select Problem:</label>
+                                <select id="problem" name="problem" class="form-control">
+                                    <option value="pain">Pain to Gain</option>
+                                    <option value="practical">Practical</option>
+                                    <option value="spiritual">Spiritual Listening</option>
+                                    <option value="prayer">Prayer Sending</option>
+                                    <option value="sad">Sad to Free</option>
+                                    <option value="precise">Precise</option>
+                                    <option value="fem">Feminine</option>
+                                    <option value="masc">Masculine</option>
+                                    <option value="direct">Direct</option>
+                                </select>
+                            </div>
+                        </td>
+                    </tr>
+          <tr>
+            <td>grey</td>
+            <td>(180, 180, 180)</td>
+            <td>cover</td>
+            <td><input value="What covers your success?" id="q" class="form-control"></td>
+          </tr>
+          <tr>
+            <td>pink</td>
+            <td>(250, 0, 50)</td>
+            <td>category</td>
+            <td><input value="What category are we in?" id="e" class="form-control"></td>
+          </tr>
+          <tr>
+            <td>gold</td>
+            <td>(250, 200, 0)</td>
+            <td>pull</td>
+            <td><input value="What pulls you to your obstacle?" id="d" class="form-control"></td>
+          </tr>
+          <tr>
+            <td>rainbow</td>
+            <td>-</td>
+            <td>return</td>
+            <td><input value="What return do you get?" id="fh" class="form-control"></td>
+          </tr>
+          <tr>
+            <td>nude</td>
+            <td>(250, 180, 120)</td>
+            <td>approach</td>
+            <td><input value="What is your approach?" id="j" class="form-control"></td>
+          </tr>
+          <tr>
+            <td>orange</td>
+            <td>(250, 130, 0)</td>
+            <td>hit</td>
+            <td><input value="How are you hit?" id="kt" class="form-control"></td>
+          </tr>
+          <tr>
+            <td>transparent</td>
+            <td>-</td>
+            <td>connect</td>
+            <td><input value="Who do you connect with?" id="0" class="form-control"></td>
+          </tr>
+          <tr>
+            <td>white</td>
+            <td>(255, 255, 255)</td>
+            <td>hope</td>
+            <td><input value="What do you hope?" id="1" class="form-control"></td>
+          </tr>
+          <tr>
+            <td>blue</td>
+            <td>(0, 0, 255)</td>
+            <td>collect</td>
+            <td><input value="What are you collecting?" id="2" class="form-control"></td>
+          </tr>
+          <tr>
+            <td>green</td>
+            <td>(0, 255, 0)</td>
+            <td>transition</td>
+            <td><input value="What do you transition through?" id="3" class="form-control"></td>
+          </tr>
+          <tr>
+            <td>red</td>
+            <td>(255, 0, 0)</td>
+            <td>limit</td>
+            <td><input value="What is your limit?" id="4" class="form-control"></td>
+          </tr>
+          <tr>
+            <td>black</td>
+            <td>(0, 0, 0)</td>
+            <td>order</td>
+            <td><input value="What would order look like?" id="5" class="form-control"></td>
+          </tr>
+          <tr>
+            <td>brown</td>
+            <td>(130, 50, 0)</td>
+            <td>learn</td>
+            <td><input value="What lesson are you learning?" id="6" class="form-control"></td>
+          </tr>
+          <tr>
+            <td>none</td>
+            <td>-</td>
+            <td>fiddle</td>
+            <td><input value="What are you working on?" id="7" class="form-control"></td>
+          </tr>
+          <tr>
+            <td>yellow</td>
+            <td>(255, 255, 0)</td>
+            <td>structure</td>
+            <td><input value="What structure are you using?" id="8" class="form-control"></td>
+          </tr>
+          <tr>
+            <td>purple</td>
+            <td>(180, 50, 255)</td>
+            <td>free</td>
+            <td><input value="What makes you feel free?" id="9" class="form-control"></td>
+          </tr>
+        </tbody>
+      </table>
+        </div>
+       <input type="submit" value="Expose" class="btn btn-primary" onclick="handleOptimize(); expose()">
+   </form>
+  <br>
+  <span id="formContent"></span><br>
+  
+      <br>Sequencing Result: <span id="result"></span><br>
+      <br>
+
+Comparison: <span id="comparison"></span><br>
+  <br>
+
+Form Content: <pre id="formResults"></pre>
+    <br>Save: <span id="save"></span><br>
+    <button onclick="print()" class="btn btn-secondary mt-3">Save</button>
+
+    <script>
+      
+        function handleOptimize() {
+            let formData = {};
+            $('#colorForm').serializeArray().forEach(item => {
+                formData[item.name] = item.value;
+            });
+
+            let result = optimize(formData);
+            $('#result').html(result);
+        }
+      function expose() {
+      document.getElementById("formResults").innerHTML = "<br>Pain to Gain: let's maybe use inspiration from " + document.getElementById("0").value + " and distribution from " + document.getElementById("d").value + " to address the pain from the " + document.getElementById("kt").value + " as from the world of a " + document.getElementById("fh").value + ". <br>Practical: let's maybe use our energy from " +  document.getElementById("7").value + " to achieve the " + document.getElementById("8").value + " for the " + document.getElementById("3").value + ". <br>Spiritual Listening: let's maybe " + document.getElementById("2").value + " with " + document.getElementById("6").value + ". <br>Prayer Sending: let's maybe " + document.getElementById("j").value + " our " + document.getElementById("1").value + ". <br>Sad to Free: let's maybe use the freedom from " + document.getElementById("9").value + " to " + document.getElementById("q").value + " for " + document.getElementById("4").value + " awareness. <br>Precise: let's maybe give openness from the " + document.getElementById("e").value + " to " + document.getElementById("5").value + ". <br>Feminine: let's maybe use " + document.getElementById("6").value + " to " + document.getElementById("d").value + " the pain of the " + document.getElementById("kt").value + " as a new " + document.getElementById("e").value + ".<br>Masculine: let's maybe use awareness from the " + document.getElementById("4").value + " to " + document.getElementById("2").value + " to address the pain from the " + document.getElementById("kt").value + " as a seed for " + document.getElementById("fh").value + ".<br>Direct: let's maybe use gratitude from " + document.getElementById("fh").value + " and inspiration from " + document.getElementById("0").value + " to limit from " +  document.getElementById("4").value + " the pain from " + document.getElementById("kt").value + ".";
+    }
+    </script>
+</body>
+</html>
