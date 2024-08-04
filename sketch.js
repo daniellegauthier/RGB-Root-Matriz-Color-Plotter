@@ -92,15 +92,34 @@ function optimize(selectedProblem) {
     };
 }
 
+
 document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('colorForm').addEventListener('submit', (e) => {
+    const form = document.getElementById('colorForm');
+    const clearButton = document.getElementById('clearButton');
+    const resultSpan = document.getElementById('result');
+    const comparisonSpan = document.getElementById('comparison');
+    const formContentPre = document.getElementById('formContent');
+
+    form.addEventListener('submit', (e) => {
         e.preventDefault();
         const selectedProblem = document.getElementById('problem').value;
         const result = optimize(selectedProblem);
-        document.getElementById('result').innerText = result.bestMatch;
-        document.getElementById('comparison').innerText = result.comparison;
+        resultSpan.innerText = result.bestMatch;
+        comparisonSpan.innerText = result.comparison;
         
-        // Display form content (selected problem)
-        document.getElementById('formContent').innerText = `Selected Problem: ${selectedProblem}`;
+        // Display form content (selected problem and all input values)
+        let formContent = `Selected Problem: ${selectedProblem}\n`;
+        const inputs = form.querySelectorAll('input[type="text"]');
+        inputs.forEach(input => {
+            formContent += `${input.name}: ${input.value}\n`;
+        });
+        formContentPre.innerText = formContent;
+    });
+
+    clearButton.addEventListener('click', () => {
+        form.reset();
+        resultSpan.innerText = '';
+        comparisonSpan.innerText = '';
+        formContentPre.innerText = '';
     });
 });
