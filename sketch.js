@@ -26,6 +26,9 @@ function calculateDotProduct(sequence1, sequence2) {
     return dotProduct;
 }
 
+let allDotProducts = [];
+
+// Pathways and their associated RGB color sequences
 function getColorSequences() {
     return [
         { name: 'pain', colors: [[250, 200, 0], [250, 130, 0]]},
@@ -40,88 +43,105 @@ function getColorSequences() {
     ];
 }
 
-function optimize(selectedProblem) {
+// Helper to calculate all dot products
+function calculateAllDotProducts() {
     const sequences = getColorSequences();
-    const selectedSequence = sequences.find(seq => seq.name === selectedProblem);
+    allDotProducts = sequences.map(seq1 => {
+        return {
+            name: seq1.name,
+            products: sequences.map(seq2 => {
+                return {
+                    name: seq2.name,
+                    dotProduct: calculateDotProduct(seq1.colors, seq2.colors)
+                };
+            })
+        };
+    });
+}
+
+// Function to optimize pathways
+function optimize(selectedPathway) {
+    const sequences = getColorSequences();
+    const selectedSequence = sequences.find(seq => seq.name === selectedPathway);
 
     if (!selectedSequence) {
+        console.error(`Selected pathway "${selectedPathway}" not found`);
         return {
-            bestMatch: "Invalid problem selected",
-            comparison: "N/A"
+            bestMatch: "Invalid pathway selected",
+            comparison: "N/A",
+            graphDescription: "N/A"
+        };
+    }
+
+    const selectedDotProducts = allDotProducts.find(dp => dp.name === selectedPathway);
+
+    if (!selectedDotProducts || !selectedDotProducts.products) {
+        console.error(`Dot products not found for "${selectedPathway}"`);
+        return {
+            bestMatch: "Error in calculation",
+            comparison: "N/A",
+            graphDescription: "N/A"
         };
     }
 
     let bestMatch = null;
-    let lowestScore = Infinity;
-    let bestDotProduct = -Infinity;
-    let selectedDotProduct = 0;
-    let percentile = 0;
+    let highestDotProduct = -Infinity;
 
-    sequences.forEach(sequence => {
-        if (sequence.name !== selectedProblem) {
-            let score = calculateSimilarityScore(selectedSequence.colors, sequence.colors);
-            let dotProduct = calculateDotProduct(selectedSequence.colors, sequence.colors);
-
-            if (score < lowestScore) {
-                lowestScore = score;
-                bestMatch = sequence;
-            }
-
-            if (dotProduct > bestDotProduct) {
-                bestDotProduct = dotProduct;
-            }
+    selectedDotProducts.products.forEach(product => {
+        if (product.name !== selectedPathway && product.dotProduct > highestDotProduct) {
+            highestDotProduct = product.dotProduct;
+            bestMatch = product.name;
         }
     });
 
-    // Calculate dot product for selected problem
-    selectedDotProduct = calculateDotProduct(selectedSequence.colors, selectedSequence.colors);
+    const sortedProducts = [...selectedDotProducts.products].sort((a, b) => b.dotProduct - a.dotProduct);
+    let selectedIndex = sortedProducts.findIndex(item => item.name === selectedPathway);
+    let percentile = ((sequences.length - selectedIndex - 1) / (sequences.length - 1)) * 100;
 
-    // Calculate percentile
-    sequences.forEach(sequence => {
-        let dotProduct = calculateDotProduct(selectedSequence.colors, sequence.colors);
-        if (dotProduct <= selectedDotProduct) {
-            percentile++;
-        }
+    let graphDescription = "Line Graph of Dot Products:\n";
+    graphDescription += "X-axis: Pathways\n";
+    graphDescription += "Y-axis: Normalized Dot Product Values\n\n";
+    graphDescription += "Data points:\n";
+    sortedProducts.forEach(item => {
+        graphDescription += `${item.name}: ${item.dotProduct.toFixed(4)}${item.name === selectedPathway ? " (Selected)" : ""}\n`;
     });
-
-    percentile = ((percentile - 1) / (sequences.length - 1)) * 100;
+    graphDescription += "\nThis graph shows the relative similarity of each pathway to the selected pathway.";
 
     return {
-        bestMatch: `Best match for "${selectedProblem}" is "${bestMatch.name}" with a similarity score of ${lowestScore.toFixed(2)}`,
-        comparison: `"${selectedProblem}" has a dot product of ${selectedDotProduct.toFixed(2)}. Percentile: ${percentile.toFixed(2)}%`
+        bestMatch: `Best match for "${selectedPathway}" is "${bestMatch}" with a normalized dot product of ${highestDotProduct.toFixed(4)}`,
+        comparison: `"${selectedPathway}" has a normalized dot product of ${sortedProducts[0].dotProduct.toFixed(4)} with itself. Percentile: ${percentile.toFixed(2)}%`,
+        graphDescription: graphDescription
     };
 }
 
+// Function to initialize the app
+function initializeApp() {
+    calculateAllDotProducts();
 
-document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('colorForm');
     const resultSpan = document.getElementById('result');
     const comparisonSpan = document.getElementById('comparison');
     const formContentPre = document.getElementById('formResults');
+    const graphDescriptionPre = document.getElementById('graphDescription');
+    const pathwaySelect = document.getElementById('pathway');
 
     form.addEventListener('submit', (e) => {
         e.preventDefault();
-        const selectedProblem = document.getElementById('pathway').value; // Capture selected pathway
-        
-        // Initialize form content for displaying user inputs
-        let formContent = `Selected Problem/Pathway: ${selectedProblem}\n\nColor Relationships:\n\n`;
-        
-        // Get color data and loop through each color to fetch input by ID
-        const colorData = getColorData();
-        colorData.forEach(data => {
-            const input = document.getElementById(`${data.color}-pathway`);
-            let userInput = input ? input.value || input.placeholder : '[imagine the possibilities]';
-            
-            // Add the user's interpretation to form content
-            formContent += `${data.color.toUpperCase()}:\nDirection: ${data.direction}\nYour interpretation: ${userInput}\n\n`;
-        });
-        
-        // Display form content
-        formContentPre.innerText = formContent;
+        const selectedPathway = pathwaySelect.value;
 
-        // Call the optimize function (pass selected problem/pathway for analysis)
-        const result = optimize(selectedProblem);
+        if (!selectedPathway) {
+            console.error('No pathway selected');
+            return;
+        }
+        
+        const result = optimize(selectedPathway);
         resultSpan.innerText = result.bestMatch;
         comparisonSpan.innerText = result.comparison;
+        graphDescriptionPre.innerText = result.graphDescription;
+        
+        formContentPre.innerText = `Selected Pathway: ${selectedPathway}`;
     });
-});
+}
+
+// Ensure the app initializes when the window loads
+window.onload = initializeApp;
