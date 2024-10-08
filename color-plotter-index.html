@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RGB Root Matriz Color Plotter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .author {
+            text-align: center;
+            font-style: italic;
+            margin-bottom: 20px;
+        }
+        .description {
+            margin-bottom: 30px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        select, input, button {
+            padding: 10px;
+            margin: 5px 0;
+            width: 100%;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #results {
+            margin-top: 20px;
+        }
+        .color-input {
+            margin-bottom: 10px;
+            width: 90%;
+        }
+        pre {
+            white-space: pre-wrap;
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        ::placeholder {
+            color: #999;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <h1>The RGB Root Matriz Color Plotter</h1>
+    <p class="author">by Danielle Gauthier</p>
+    
+    <div class="description">
+        <p>This program is inspired by the ecofeminist pluriverse and feminist perspectives on family-making and crafting. It is used for telepathic communication and other forms of poetic linguistic navigation programming. The directional words are generated using a Python algorithm that analyzes color relationships and semantic meanings to suggest linguistically resonant navigation paths.</p>
+        
+        <h3>To use this deterministic model for sequence optimization:</h3>
+        <ol>
+            <li>Enter an obstacle in the first textbox (optional).</li>
+            <li>Select the type of pathway you want to explore (optional).</li>
+            <li>For each color, enter how your obstacle relates to the directional words (optional), or leave as is to use the default directions.</li>
+            <li>Hit Expose and imagine the possibilities.</li>
+        </ol>
+    </div>
+
+    <form id="colorForm">
+        <div class="form-group">
+            <label for="obstacle">Enter your obstacle (optional):</label>
+            <input type="text" id="obstacle" name="obstacle" placeholder="e.g., fear, uncertainty, conflict...">
+        </div>
+
+        <div class="form-group">
+            <label for="pathway">Select Pathway:</label>
+            <select id="pathway" name="pathway">
+                <option value="">Choose a pathway (optional)</option>
+                <option value="pain">Pain to Gain</option>
+                <option value="practical">Practical</option>
+                <option value="spiritual">Spiritual</option>
+                <option value="prayer">Prayer</option>
+                <option value="sad">Sad to Free</option>
+                <option value="precise">Precise</option>
+                <option value="fem">Feminine</option>
+                <option value="masc">Masculine</option>
+                <option value="direct">Direct</option>
+            </select>
+        </div>
+
+        <table id="colorTable">
+            <thead>
+                <tr>
+                    <th>Color</th>
+                    <th>Direction</th>
+                    <th>Your Input (optional)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="background-color: rgb(170,170,170)">grey</td>
+                    <td>respectful effective apposite precary</td>
+                    <td><input type="text" name="grey-input" class="color-input" placeholder="respectful effective apposite precary"></td>
+                </tr>
+                <tr>
+                    <td style="background-color: rgb(250,0,90)">pink</td>
+                    <td>incredibily exquisite and ambitious</td>
+                    <td><input type="text" name="pink-input" class="color-input" placeholder="incredibily exquisite and ambitious"></td>
+                </tr>
+                <tr>
+                    <td style="background-color: rgb(250,200,0)">gold</td>
+                    <td>undepartable preflorating technocracy lotiform</td>
+                    <td><input type="text" name="gold-input" class="color-input" placeholder="undepartable preflorating technocracy lotiform"></td>
+                </tr>
+                <tr>
+                    <td style="background-color: rgb(250,180,120)">nude</td>
+                    <td>felicitously deft satisfied unextenuable</td>
+                    <td><input type="text" name="nude-input" class="color-input" placeholder="felicitously deft satisfied unextenuable"></td>
+                </tr>
+                <tr>
+                    <td style="background-color: rgb(250,110,0)">orange</td>
+                    <td>blurry artesian awesome</td>
+                    <td><input type="text" name="orange-input" class="color-input" placeholder="blurry artesian awesome"></td>
+                </tr>
+                <tr>
+                    <td style="background-color: rgb(255,255,255)">white</td>
+                    <td>unlavish analeptical</td>
+                    <td><input type="text" name="white-input" class="color-input" placeholder="unlavish analeptical"></td>
+                </tr>
+                <tr>
+                    <td style="background-color: rgb(0,0,255)">blue</td>
+                    <td>daintily perfect, intelligent photopathy</td>
+                    <td><input type="text" name="blue-input" class="color-input" placeholder="daintily perfect, intelligent photopathy"></td>
+                </tr>
+                <tr>
+                    <td style="background-color: rgb(0,255,0)">green</td>
+                    <td>bulbous spontaneous heroic</td>
+                    <td><input type="text" name="green-input" class="color-input" placeholder="bulbous spontaneous heroic"></td>
+                </tr>
+                <tr>
+                    <td style="background-color: rgb(255,0,0)">red</td>
+                    <td>candid apophantic, distinct and radiant</td>
+                    <td><input type="text" name="red-input" class="color-input" placeholder="candid apophantic, distinct and radiant"></td>
+                </tr>
+                <tr>
+                    <td style="background-color: rgb(0,0,0); color: white;">black</td>
+                    <td>undertreated paleoatavistic obeyable swabble</td>
+                    <td><input type="text" name="black-input" class="color-input" placeholder="undertreated paleoatavistic obeyable swabble"></td>
+                </tr>
+                <tr>
+                    <td style="background-color: rgb(180,50,0)">brown</td>
+                    <td>abundantly notable and unique submissive</td>
+                    <td><input type="text" name="brown-input" class="color-input" placeholder="abundantly notable and unique submissive"></td>
+                </tr>
+                <tr>
+                    <td style="background-color: rgb(255,255,0)">yellow</td>
+                    <td>exhilerating redressible authority plausible</td>
+                    <td><input type="text" name="yellow-input" class="color-input" placeholder="exhilerating redressible authority plausible"></td>
+                </tr>
+                <tr>
+                    <td style="background-color: rgb(180,50,255)">purple</td>
+                    <td>perfectly great - imaginative, brave, gifted</td>
+                    <td><input type="text" name="purple-input" class="color-input" placeholder="perfectly great - imaginative, brave, gifted"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <button type="submit">Expose</button>
+    </form>
+
+    <div id="results">
+        <p><strong>Sequencing Result:</strong> <span id="result"></span></p>
+        <p><strong>Comparison:</strong> <span id="comparison"></span></p>
+        <div>
+            <strong>Form Content:</strong>
+            <pre id="formResults"></pre>
+        </div>
+    </div>
+
+    <script>
+    function getColorData() {
+        return [
+            { color: 'grey', rgb: [170,170,170], direction: 'respectful effective apposite precary' },
+            { color: 'pink', rgb: [250,0,90], direction: 'incredibily exquisite and ambitious' },
+            { color: 'gold', rgb: [250,200,0], direction: 'undepartable preflorating technocracy lotiform' },
+            { color: 'nude', rgb: [250,180,120], direction: 'felicitously deft satisfied unextenuable' },
+            { color: 'orange', rgb: [250,110,0], direction: 'blurry artesian awesome' },
+            { color: 'white', rgb: [255,255,255], direction: 'unlavish analeptical' },
+            { color: 'blue', rgb: [0,0,255], direction: 'daintily perfect, intelligent photopathy' },
+            { color: 'green', rgb: [0,255,0], direction: 'bulbous spontaneous heroic' },
+            { color: 'red', rgb: [255,0,0], direction: 'candid apophantic, distinct and radiant' },
+            { color: 'black', rgb: [0,0,0], direction: 'undertreated paleoatavistic obeyable swabble' },
+            { color: 'brown', rgb: [180,50,0], direction: 'abundantly notable and unique submissive' },
+            { color: 'yellow', rgb: [255,255,0], direction: 'exhilerating redressible authority plausible' },
+            { color: 'purple', rgb: [180,50,255], direction: 'perfectly great - imaginative, brave, gifted' }
+        ];
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('colorForm');
+        const resultSpan = document.getElementById('result');
+        const comparisonSpan = document.getElementById('comparison');
+        const formContentPre = document.getElementById('formResults');
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const obstacle = document.getElementById('obstacle').value || '[no obstacle entered]';
+            const pathway = document.getElementById('pathway').value || '[no pathway selected]';
+            
+            let formContent = `Obstacle: ${obstacle}\nPathway: ${pathway}\n\nColor Relationships:\n\n`;
+            
+            const colorData = getColorData();
+            colorData.forEach(data => {
+                const input = form.querySelector(`input[name="${data.color}-input"]`);
+                let userInput = input.value || input.placeholder;
+                
+                formContent += `${data.color.toUpperCase()}:\nDirection: ${data.direction}\nYour interpretation: ${userInput}\n\n`;
+            });
+            
+            resultSpan.innerText = pathway !== '[no pathway selected]' ? 
+                `Exploring "${pathway}" pathway...` : 
+                'Awaiting your journey through color...';
+            
+            comparisonSpan.innerText = obstacle !== '[no obstacle entered]' ? 
+                `Transforming "${obstacle}" through chromatic resonance...` :
+                'Ready to transmute your challenges into chromatic wisdom.';
+            
+            formContentPre.innerText = formContent;
+        });
+    });
+    </script>
+</body>
+</html>
