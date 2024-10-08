@@ -130,66 +130,24 @@
         <button type="submit">Expose</button>
     </form>
 
+    
+        <button type="submit" class="btn btn-primary">Expose</button>
+    </form>
+
     <div id="results">
-        <p><strong>Sequencing Result:</strong> <span id="result"></span></p>
-        <p><strong>Comparison:</strong> <span id="comparison"></span></p>
-        <div>
-            <strong>Form Content:</strong>
-            <pre id="formResults"></pre>
+        <div class="alert alert-info">
+            <p><strong>Sequencing Result:</strong> <span id="result">Awaiting your journey through color...</span></p>
+            <p><strong>Comparison:</strong> <span id="comparison">Ready to transmute challenges into chromatic wisdom.</span></p>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <strong>Detailed Results:</strong>
+            </div>
+            <div class="card-body">
+                <pre id="formResults"></pre>
+            </div>
         </div>
     </div>
 
-    <script>
-    function getColorData() {
-        return [
-           { color: 'grey', rgb: [170,170,170], direction: 'respectful effective apposite precary' },
-            { color: 'pink', rgb: [250,0,90], direction: 'incredibily exquisite and ambitious' },
-            { color: 'gold', rgb: [250,200,0], direction: 'undepartable preflorating technocracy lotiform' },
-            { color: 'nude', rgb: [250,180,120], direction: 'felicitously deft satisfied unextenuable' },
-            { color: 'orange', rgb: [250,110,0], direction: 'blurry artesian awesome' },
-            { color: 'white', rgb: [255,255,255], direction: 'unlavish analeptical' },
-            { color: 'blue', rgb: [0,0,255], direction: 'daintily perfect, intelligent photopathy' },
-            { color: 'green', rgb: [0,255,0], direction: 'bulbous spontaneous heroic' },
-            { color: 'red', rgb: [255,0,0], direction: 'candid apophantic, distinct and radiant' },
-            { color: 'black', rgb: [0,0,0], direction: 'undertreated paleoatavistic obeyable swabble' },
-            { color: 'brown', rgb: [180,50,0], direction: 'abundantly notable and unique submissive' },
-            { color: 'yellow', rgb: [255,255,0], direction: 'exhilerating redressible authority plausible' },
-            { color: 'purple', rgb: [180,50,255], direction: 'perfectly great - imaginative, brave, gifted' }
-        ];
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        const form = document.getElementById('colorForm');
-        const resultSpan = document.getElementById('result');
-        const comparisonSpan = document.getElementById('comparison');
-        const formContentPre = document.getElementById('formResults');
-
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const obstacle = document.getElementById('obstacle').value || '[no obstacle entered]';
-            const pathway = document.getElementById('pathway').value || '[no pathway selected]';
-            
-            let formContent = `Obstacle: ${obstacle}\nPathway: ${pathway}\n\nColor Relationships:\n\n`;
-            
-            const colorData = getColorData();
-            colorData.forEach(data => {
-                const input = document.getElementById(`${data.color}-pathway`);
-                let userInput = input.value || input.placeholder;
-                
-                formContent += `${data.color.toUpperCase()}:\nDirection: ${data.direction}\nYour interpretation: ${userInput}\n\n`;
-            });
-            
-            resultSpan.innerText = pathway !== '[no pathway selected]' ? 
-                `Exploring "${pathway}" pathway...` : 
-                'Awaiting your journey through color...';
-            
-            comparisonSpan.innerText = obstacle !== '[no obstacle entered]' ? 
-                `Transforming "${obstacle}" through chromatic resonance...` :
-                'Ready to transmute your challenges into chromatic wisdom.';
-            
-            formContentPre.innerText = formContent;
-        });
-    });
-    </script>
 </body>
 </html>
