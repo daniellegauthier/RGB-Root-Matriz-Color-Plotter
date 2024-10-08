@@ -95,31 +95,33 @@ function optimize(selectedProblem) {
 
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('colorForm');
-    const clearButton = document.getElementById('clearButton');
     const resultSpan = document.getElementById('result');
     const comparisonSpan = document.getElementById('comparison');
-    const formContentPre = document.getElementById('formContent');
+    const formContentPre = document.getElementById('formResults');
 
     form.addEventListener('submit', (e) => {
         e.preventDefault();
-        const selectedProblem = document.getElementById('problem').value;
+        const selectedProblem = document.getElementById('pathway').value; // Capture selected pathway
+        
+        // Initialize form content for displaying user inputs
+        let formContent = `Selected Problem/Pathway: ${selectedProblem}\n\nColor Relationships:\n\n`;
+        
+        // Get color data and loop through each color to fetch input by ID
+        const colorData = getColorData();
+        colorData.forEach(data => {
+            const input = document.getElementById(`${data.color}-pathway`);
+            let userInput = input ? input.value || input.placeholder : '[imagine the possibilities]';
+            
+            // Add the user's interpretation to form content
+            formContent += `${data.color.toUpperCase()}:\nDirection: ${data.direction}\nYour interpretation: ${userInput}\n\n`;
+        });
+        
+        // Display form content
+        formContentPre.innerText = formContent;
+
+        // Call the optimize function (pass selected problem/pathway for analysis)
         const result = optimize(selectedProblem);
         resultSpan.innerText = result.bestMatch;
         comparisonSpan.innerText = result.comparison;
-        
-        // Display form content (selected problem and all input values)
-        let formContent = `Selected Problem: ${selectedProblem}\n`;
-        const inputs = form.querySelectorAll('input[type="text"]');
-        inputs.forEach(input => {
-            formContent += `${input.name}: ${input.value}\n`;
-        });
-        formContentPre.innerText = formContent;
-    });
-
-    clearButton.addEventListener('click', () => {
-        form.reset();
-        resultSpan.innerText = '';
-        comparisonSpan.innerText = '';
-        formContentPre.innerText = '';
     });
 });
