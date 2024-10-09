@@ -68,109 +68,123 @@ const similarityMatrix = {
 };
 
 function getColorData() {
-    return [
-        { color: 'grey', rgb: [170,170,170], direction: 'respectful effective apposite precary' },
-        { color: 'pink', rgb: [250,0,90], direction: 'incredibily exquisite and ambitious' },
-        { color: 'gold', rgb: [250,200,0], direction: 'undepartable preflorating technocracy lotiform' },
-        { color: 'nude', rgb: [250,180,120], direction: 'felicitously deft satisfied unextenuable' },
-        { color: 'orange', rgb: [250,110,0], direction: 'blurry artesian awesome' },
-        { color: 'white', rgb: [255,255,255], direction: 'unlavish analeptical' },
-        { color: 'blue', rgb: [0,0,255], direction: 'daintily perfect, intelligent photopathy' },
-        { color: 'green', rgb: [0,255,0], direction: 'bulbous spontaneous heroic' },
-        { color: 'red', rgb: [255,0,0], direction: 'candid apophantic, distinct and radiant' },
-        { color: 'black', rgb: [0,0,0], direction: 'undertreated paleoatavistic obeyable swabble' },
-        { color: 'brown', rgb: [180,50,0], direction: 'abundantly notable and unique submissive' },
-        { color: 'yellow', rgb: [255,255,0], direction: 'exhilerating redressible authority plausible' },
-        { color: 'purple', rgb: [180,50,255], direction: 'perfectly great - imaginative, brave, gifted' }
-    ];
-}
+        return [
+            { color: 'grey', rgb: [170,170,170], direction: 'respectful effective apposite precary' },
+            { color: 'pink', rgb: [250,0,90], direction: 'incredibily exquisite and ambitious' },
+            { color: 'gold', rgb: [250,200,0], direction: 'undepartable preflorating technocracy lotiform' },
+            { color: 'nude', rgb: [250,180,120], direction: 'felicitously deft satisfied unextenuable' },
+            { color: 'orange', rgb: [250,110,0], direction: 'blurry artesian awesome' },
+            { color: 'white', rgb: [255,255,255], direction: 'unlavish analeptical' },
+            { color: 'blue', rgb: [0,0,255], direction: 'daintily perfect, intelligent photopathy' },
+            { color: 'green', rgb: [0,255,0], direction: 'bulbous spontaneous heroic' },
+            { color: 'red', rgb: [255,0,0], direction: 'candid apophantic, distinct and radiant' },
+            { color: 'black', rgb: [0,0,0], direction: 'undertreated paleoatavistic obeyable swabble' },
+            { color: 'brown', rgb: [180,50,0], direction: 'abundantly notable and unique submissive' },
+            { color: 'yellow', rgb: [255,255,0], direction: 'exhilerating redressible authority plausible' },
+            { color: 'purple', rgb: [180,50,255], direction: 'perfectly great - imaginative, brave, gifted' }
+        ];
+    }
 
-function getPathwaySequences() {
-    return {
-        'pain': ['gold', 'orange'],
-        'practical': ['yellow', 'green'],
-        'spiritual': ['blue', 'brown'],
-        'prayer': ['nude', 'white'],
-        'sad': ['purple', 'grey', 'red'],
-        'precise': ['pink', 'black'],
-        'fem': ['brown', 'gold', 'orange', 'pink'],
-        'masc': ['red', 'blue', 'orange'],
-        'direct': ['red', 'orange']
-    };
-}
+    function getPathwaySequences() {
+        return {
+            'pain': ['gold', 'orange'],
+            'practical': ['yellow', 'green'],
+            'spiritual': ['blue', 'brown'],
+            'prayer': ['nude', 'white'],
+            'sad': ['purple', 'grey', 'red'],
+            'precise': ['pink', 'black'],
+            'fem': ['brown', 'gold', 'orange', 'pink'],
+            'masc': ['red', 'blue', 'orange'],
+            'direct': ['red', 'orange']
+        };
+    }
 
-function findStrongestConnections(color) {
-    const connections = Object.entries(similarityMatrix[color])
-        .filter(([key, value]) => key !== color && value > 0.8)
-        .sort((a, b) => b[1] - a[1]);
-    return connections.slice(0, 3);
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    const form = document.getElementById('colorForm');
-    const resultSpan = document.getElementById('result');
-    const comparisonSpan = document.getElementById('comparison');
-    const formContentPre = document.getElementById('formResults');
-
-    form.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const obstacle = document.getElementById('obstacle').value || '[no obstacle entered]';
-        const pathway = document.getElementById('pathway').value || '[no pathway selected]';
-        
-        let formContent = `Obstacle: ${obstacle}\nPathway: ${pathway}\n\n`;
-        
-        if (pathway) {
-            const pathwaySequences = getPathwaySequences();
-            const sequence = pathwaySequences[pathway] || [];
-            
-            formContent += `Pathway Sequence:\n`;
-            sequence.forEach(color => {
-                const colorData = getColorData().find(c => c.color === color);
-                if (colorData) {
-                    formContent += `${colorData.color.toUpperCase()}: ${colorData.direction}\n`;
-                    
-                    // Add color relationships
-                    const connections = findStrongestConnections(color);
-                    if (connections.length > 0) {
-                        formContent += "Resonant connections:\n";
-                        connections.forEach(([connectedColor, strength]) => {
-                            const connectedData = getColorData().find(c => c.color === connectedColor);
-                            formContent += `  - ${connectedData.color.toUpperCase()} (${(strength * 100).toFixed(1)}% resonance): ${connectedData.direction}\n`;
-                        });
-                    }
-                    formContent += "\n";
-                }
-            });
-        }
-        
-        formContent += `Color Relationships:\n\n`;
-        
+    document.addEventListener('DOMContentLoaded', () => {
+        const colorTable = document.getElementById('colorTable').getElementsByTagName('tbody')[0];
         const colorData = getColorData();
+        
+        // Populate table
         colorData.forEach(data => {
-            const input = form.querySelector(`input[name="${data.color}-input"]`);
-            let userInput = input.value || input.placeholder;
-            
-            formContent += `${data.color.toUpperCase()}:\nDirection: ${data.direction}\nYour interpretation: ${userInput}\n\n`;
+            const row = colorTable.insertRow();
+            row.innerHTML = `
+                <td style="background-color: rgb(${data.rgb.join(',')})${data.color === 'black' ? '; color: white' : ''}">${data.color}</td>
+                <td>${data.direction}</td>
+                <td><input type="text" id="${data.color}-pathway" name="${data.color}-input" class="color-input" placeholder="${data.direction}"></td>
+            `;
         });
-        
-        let resultText = 'Awaiting your journey through color...';
-        if (pathway !== '[no pathway selected]') {
-            const pathwaySequences = getPathwaySequences();
-            const sequence = pathwaySequences[pathway] || [];
-            if (sequence.length >= 2) {
-                const similarity = similarityMatrix[sequence[0]][sequence[1]];
-                const resonanceType = similarity > 0.9 ? 'harmonious' : similarity > 0.5 ? 'balanced' : 'transformative';
-                resultText = `Exploring "${pathway}" pathway - a ${resonanceType} journey from ${sequence[0]} to ${sequence[1]}`;
+
+        const form = document.getElementById('colorForm');
+        const clearBtn = document.getElementById('clearBtn');
+        const saveBtn = document.getElementById('saveBtn');
+        const resultSpan = document.getElementById('result');
+        const comparisonSpan = document.getElementById('comparison');
+        const formContentPre = document.getElementById('formResults');
+
+        function createSentenceFromInputs(sequence) {
+            return sequence.map(color => {
+                const input = form.querySelector(`input[name="${color}-input"]`);
+                return input.value || input.placeholder;
+            }).join(' through ');
+        }
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const obstacle = document.getElementById('obstacle').value || '[no obstacle entered]';
+            const pathway = document.getElementById('pathway').value;
+            
+            let formContent = `RGB Root Matriz Color Plotter Results\n\n`;
+            formContent += `Obstacle: ${obstacle}\nPathway: ${pathway || '[no pathway selected]'}\n\n`;
+            
+            if (pathway) {
+                const pathwaySequences = getPathwaySequences();
+                const sequence = pathwaySequences[pathway];
+                
+                const sentencePath = createSentenceFromInputs(sequence);
+                formContent += `Suggested Direction:\n${sentencePath}\n\n`;
+                
+                formContent += `Color Sequence Analysis:\n`;
+                for (let i = 0; i < sequence.length - 1; i++) {
+                    const similarity = similarityMatrix[sequence[i]][sequence[i+1]];
+                    formContent += `${sequence[i].toUpperCase()} to ${sequence[i+1].toUpperCase()}: ${(similarity * 100).toFixed(1)}% resonance\n`;
+                }
+                formContent += '\n';
             }
-        }
-        resultSpan.innerText = resultText;
-        
-        let comparisonText = 'Ready to transmute challenges into chromatic wisdom.';
-        if (obstacle !== '[no obstacle entered]') {
-            comparisonText = `Transforming "${obstacle}" through the wisdom of color relationships`;
-        }
-        comparisonSpan.innerText = comparisonText;
-        
-        formContentPre.innerText = formContent;
+            
+            formContent += `Individual Color Interpretations:\n`;
+            colorData.forEach(data => {
+                const input = form.querySelector(`input[name="${data.color}-input"]`);
+                const userInput = input.value || input.placeholder;
+                formContent += `${data.color.toUpperCase()}:\n  Original: ${data.direction}\n  Your interpretation: ${userInput}\n\n`;
+            });
+            
+            resultSpan.innerText = pathway ? `Path: ${createSentenceFromInputs(pathwaySequences[pathway])}` : 'Awaiting your journey through color...';
+            comparisonSpan.innerText = obstacle !== '[no obstacle entered]' ? 
+                `Transforming "${obstacle}" through the wisdom of color relationships` : 
+                'Ready to transmute challenges into chromatic wisdom.';
+            
+            formContentPre.innerText = formContent;
+        });
+
+        clearBtn.addEventListener('click', () => {
+            form.reset();
+            formContentPre.innerText = '';
+            resultSpan.innerText = 'Awaiting your journey through color...';
+            comparisonSpan.innerText = 'Ready to transmute challenges into chromatic wisdom.';
+        });
+
+        saveBtn.addEventListener('click', () => {
+            const content = formContentPre.innerText;
+            if (!content) {
+                alert('Please generate results before saving.');
+                return;
+            }
+            
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'color-plotter-results.txt';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        });
     });
-});
