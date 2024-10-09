@@ -136,13 +136,43 @@ function getColorSequenceRgb(pathway) {
     });
 }
 
+function getColorDirection(color) {
+    const colorData = getColorData().find(c => c.color === color);
+    return colorData ? colorData.direction : '';
+}
+
+function getColorRgb(color) {
+    const colorData = getColorData().find(c => c.color === color);
+    return colorData ? colorData.rgb : [0, 0, 0];
+}
+
+function getColorSequenceRgb(pathway) {
+    const pathwaySequences = getPathwaySequences();
+    const sequence = pathwaySequences[pathway] || [];
+    return sequence.map(color => getColorRgb(color));
+}
+
+function calculateDotProduct(rgbSeq1, rgbSeq2) {
+    // Ensure sequences are of equal length for comparison
+    const minLength = Math.min(rgbSeq1.length, rgbSeq2.length);
+    let dotProduct = 0;
+    
+    for (let i = 0; i < minLength; i++) {
+        const rgb1 = rgbSeq1[i];
+        const rgb2 = rgbSeq2[i];
+        dotProduct += rgb1[0] * rgb2[0] + rgb1[1] * rgb2[1] + rgb1[2] * rgb2[2];
+    }
+    
+    return dotProduct;
+}
+
 // Function to get the closest pathway based on similarity score
 function getClosestPathway(selectedPathway) {
     const allSequences = getPathwaySequences();
     const selectedRgb = getColorSequenceRgb(selectedPathway);
     let bestMatch = null;
     let highestDotProduct = -Infinity;
-
+    
     for (const [pathway, sequence] of Object.entries(allSequences)) {
         if (pathway !== selectedPathway) {
             const currentRgb = getColorSequenceRgb(pathway);
@@ -153,7 +183,7 @@ function getClosestPathway(selectedPathway) {
             }
         }
     }
-
+    
     return { bestMatch, similarityScore: highestDotProduct };
 }
 
@@ -161,7 +191,7 @@ function getClosestPathway(selectedPathway) {
 function generateHealingSentences() {
     const pathways = getPathwaySequences();
     const sentences = [];
-
+    
     for (const [pathway, colors] of Object.entries(pathways)) {
         let sentence = `Let's create `;
         colors.forEach((color, index) => {
@@ -170,47 +200,102 @@ function generateHealingSentences() {
             if (index < colors.length - 1) sentence += ' with ';
         });
         sentence += `. This aligns with the notion of "${pathway}".`;
-
+        
         // Calculate the closest pathway based on similarity
         const { bestMatch, similarityScore } = getClosestPathway(pathway);
-        sentence += ` The closest sequence is "${bestMatch}" with a similarity score of ${similarityScore.toFixed(4)}.`;
-
+        sentence += ` The closest sequence is "${bestMatch}" with a similarity score of ${(similarityScore / 1000000).toFixed(4)}.`;
+        
         sentences.push(sentence);
     }
-
+    
     return sentences;
 }
 
-// Example: Generate sentences and display them
-function displayHealingSentences() {
-    const sentences = generateHealingSentences();
-    sentences.forEach(sentence => {
-        console.log(sentence); // Replace this with a UI element in your actual form
-    });
-}
+// Update your document.addEventListener('DOMContentLoaded', ...) function:
+document.addEventListener('DOMContentLoaded', () => {
+    // ... (keep your existing initialization code)
 
-displayHealingSentences(); // Call this when you want to generate and display the sentences
+    const form = document.getElementById('colorForm');
+    const clearBtn = document.getElementById('clearBtn');
+    const saveBtn = document.getElementById('saveBtn');
+    const resultSpan = document.getElementById('result');
+    const comparisonSpan = document.getElementById('comparison');
+    const formContentPre = document.getElementById('formResults');
 
-        clearBtn.addEventListener('click', () => {
-            form.reset();
-            formContentPre.innerText = '';
-            resultSpan.innerText = 'Awaiting your journey through color...';
-            comparisonSpan.innerText = 'Ready to transmute challenges into chromatic wisdom.';
+    // Add this new function to update the UI with healing suggestions
+    function updateHealingSuggestions() {
+        const sentences = generateHealingSentences();
+        let healingContent = '\nHealing Pathway Suggestions:\n\n';
+        sentences.forEach(sentence => {
+            healingContent += sentence + '\n\n';
         });
+        return healingContent;
+    }
 
-        saveBtn.addEventListener('click', () => {
-            const content = formContentPre.innerText;
-            if (!content) {
-                alert('Please generate results before saving.');
-                return;
-            }
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const obstacle = document.getElementById('obstacle').value || '[no obstacle entered]';
+        const pathway = document.getElementById('pathway').value;
+        
+        let formContent = `RGB Root Matriz Color Plotter Results\n\n`;
+        formContent += `Obstacle: ${obstacle}\nPathway: ${pathway || '[no pathway selected]'}\n\n`;
+        
+        if (pathway) {
+            const pathwaySequences = getPathwaySequences();
+            const sequence = pathwaySequences[pathway];
             
-            const blob = new Blob([content], { type: 'text/plain' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'color-plotter-results.txt';
-            a.click();
-            window.URL.revokeObjectURL(url);
+            const sentencePath = createSentenceFromInputs(sequence);
+            formContent += `Suggested Direction:\n${sentencePath}\n\n`;
+            
+            formContent += `Color Sequence Analysis:\n`;
+            for (let i = 0; i < sequence.length - 1; i++) {
+                const similarity = similarityMatrix[sequence[i]][sequence[i+1]];
+                formContent += `${sequence[i].toUpperCase()} to ${sequence[i+1].toUpperCase()}: ${(similarity * 100).toFixed(1)}% resonance\n`;
+            }
+            formContent += '\n';
+        }
+        
+        formContent += `Individual Color Interpretations:\n`;
+        getColorData().forEach(data => {
+            const input = form.querySelector(`input[name="${data.color}-input"]`);
+            const userInput = input.value || input.placeholder;
+            formContent += `${data.color.toUpperCase()}:\n  Original: ${data.direction}\n  Your interpretation: ${userInput}\n\n`;
         });
+        
+        // Add healing suggestions to the form content
+        formContent += updateHealingSuggestions();
+        
+        resultSpan.innerText = pathway ? 
+            `Path: ${createSentenceFromInputs(pathwaySequences[pathway])}` : 
+            'Awaiting your journey through color...';
+        
+        comparisonSpan.innerText = obstacle !== '[no obstacle entered]' ? 
+            `Transforming "${obstacle}" through the wisdom of color relationships` : 
+            'Ready to transmute challenges into chromatic wisdom.';
+        
+        formContentPre.innerText = formContent;
     });
+
+    clearBtn.addEventListener('click', () => {
+        form.reset();
+        formContentPre.innerText = '';
+        resultSpan.innerText = 'Awaiting your journey through color...';
+        comparisonSpan.innerText = 'Ready to transmute challenges into chromatic wisdom.';
+    });
+
+    saveBtn.addEventListener('click', () => {
+        const content = formContentPre.innerText;
+        if (!content) {
+            alert('Please generate results before saving.');
+            return;
+        }
+        
+        const blob = new Blob([content], { type: 'text/plain' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'color-plotter-results.txt';
+        a.click();
+        window.URL.revokeObjectURL(url);
+    });
+});
