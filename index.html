@@ -1,154 +1,16 @@
-</html>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The RGB Root Matriz Color Plotter</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="style.css">
-    <script src="sketch.js"></script>
+    <title>RGB Root Matrix Color Plotter</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.21.2/babel.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
 </head>
 <body>
-    <h1>The RGB Root Matriz Color Plotter</h1>
-    <p class="author">by Danielle Gauthier</p>
-    
-    <div class="description">
-        <p>This program is inspired by the ecofeminist pluriverse and feminist perspectives on family-making and crafting. It is used for telepathic communication and other forms of poetic linguistic navigation programming. The directional words are generated using a Python algorithm that analyzes color relationships and semantic meanings to suggest linguistically resonant navigation paths.</p>
-        
-        <h3>To use this deterministic model for sequence optimization:</h3>
-        <ol>
-            <li>Enter an obstacle in the first textbox (optional).</li>
-            <li>Select the type of pathway you want to explore (optional).</li>
-            <li>For each color, enter how your obstacle relates to the directional words (optional), or leave as is to use the default directions.</li>
-            <li>Hit Expose and imagine the possibilities.</li>
-        </ol>
-    </div>
-
-    <form id="colorForm">
-        <div class="form-group">
-            <label for="obstacle">Enter your obstacle (optional):</label>
-            <input type="text" id="obstacle" name="obstacle" placeholder="e.g., fear, uncertainty, conflict...">
-        </div>
-
-        <div class="form-group">
-            <label for="pathway">Select Pathway:</label>
-            <select id="pathway" name="pathway">
-                <option value="">Choose a pathway (optional)</option>
-                <option value="pain">Pain to Gain</option>
-                <option value="practical">Practical</option>
-                <option value="spiritual">Spiritual</option>
-                <option value="prayer">Prayer</option>
-                <option value="sad">Sad to Free</option>
-                <option value="precise">Precise</option>
-                <option value="fem">Feminine</option>
-                <option value="masc">Masculine</option>
-                <option value="direct">Direct</option>
-            </select>
-        </div>
-
-        <table id="colorTable">
-            <thead>
-                <tr>
-                    <th>Color</th>
-                    <th>Direction</th>
-                    <th>Your Input (optional)</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td style="background-color: rgb(170,170,170)">grey</td>
-                    <td>respectful effective apposite precary</td>
-                    <td><input type="text" id="grey-pathway" name="grey-input" class="color-input" placeholder="respectful effective apposite precary"></td>
-                </tr>
-                <tr>
-                    <td style="background-color: rgb(250,0,90)">pink</td>
-                    <td>incredibily exquisite and ambitious</td>
-                    <td><input type="text" id="pink-pathway" name="pink-input" class="color-input" placeholder="incredibily exquisite and ambitious"></td>
-                </tr>
-              <tr>
-                    <td style="background-color: rgb(250,200,0)">gold</td>
-                    <td>undepartable preflorating technocracy lotiform</td>
-                    <td><input type="text" id="gold-pathway" name="gold-input" class="color-input" placeholder="undepartable preflorating technocracy lotiform"></td>
-                </tr>
-                <tr>
-                    <td style="background-color: rgb(250,180,120)">nude</td>
-                    <td>felicitously deft satisfied unextenuable</td>
-                    <td><input type="text" id="nude-pathway" name="nude-input" class="color-input" placeholder="felicitously deft satisfied unextenuable"></td>
-                </tr>
-                <tr>
-                    <td style="background-color: rgb(250,110,0)">orange</td>
-                    <td>blurry artesian awesome</td>
-                    <td><input type="text" id="orange-pathway" name="orange-input" class="color-input" placeholder="blurry artesian awesome"></td>
-                </tr>
-                <tr>
-                    <td style="background-color: rgb(255,255,255)">white</td>
-                    <td>unlavish analeptical</td>
-                    <td><input type="text" id="white-pathway" name="white-input" class="color-input" placeholder="unlavish analeptical"></td>
-                </tr>
-                <tr>
-                    <td style="background-color: rgb(0,0,255)">blue</td>
-                    <td>daintily perfect, intelligent photopathy</td>
-                    <td><input type="text" id="blue-pathway" name="blue-input" class="color-input" placeholder="daintily perfect, intelligent photopathy"></td>
-                </tr>
-                <tr>
-                    <td style="background-color: rgb(0,255,0)">green</td>
-                    <td>bulbous spontaneous heroic</td>
-                    <td><input type="text" id="green-pathway" name="green-input" class="color-input" placeholder="bulbous spontaneous heroic"></td>
-                </tr>
-                <tr>
-                    <td style="background-color: rgb(255,0,0)">red</td>
-                    <td>candid apophantic, distinct and radiant</td>
-                    <td><input type="text" id="red-pathway" name="red-input" class="color-input" placeholder="candid apophantic, distinct and radiant"></td>
-                </tr>
-                <tr>
-                    <td style="background-color: rgb(0,0,0); color: white;">black</td>
-                    <td>undertreated paleoatavistic obeyable swabble</td>
-                    <td><input type="text" id="black-pathway" name="black-input" class="color-input" placeholder="undertreated paleoatavistic obeyable swabble"></td>
-                </tr>
-                <tr>
-                    <td style="background-color: rgb(180,50,0)">brown</td>
-                    <td>abundantly notable and unique submissive</td>
-                    <td><input type="text" id="brown-pathway" name="brown-input" class="color-input" placeholder="abundantly notable and unique submissive"></td>
-                </tr>
-                <tr>
-                    <td style="background-color: rgb(255,255,0)">yellow</td>
-                    <td>exhilerating redressible authority plausible</td>
-                    <td><input type="text" id="yellow-pathway" name="yellow-input" class="color-input" placeholder="exhilerating redressible authority plausible"></td>
-                </tr>
-                <tr>
-                    <td style="background-color: rgb(180,50,255)">purple</td>
-                    <td>perfectly great - imaginative, brave, gifted</td>
-                    <td><input type="text" id="purple-pathway" name="purple-input" class="color-input" placeholder="perfectly great - imaginative, brave, gifted"></td>
-                </tr>
-            </tbody>
-        </table>
-
-        <button type="submit">Expose</button>
-    </form>
-
-     <button type="submit" class="btn btn-primary">Expose</button>
-        <button type="button" class="btn btn-secondary" id="clearBtn">Clear</button>
-        <button type="button" class="btn btn-success" id="saveBtn">Save Results</button>
-    </form>
-
-    <div id="results">
-        <div class="alert alert-info">
-            <p><strong>Sequencing Result:</strong> <span id="result">Awaiting your journey through color...</span></p>
-            <p><strong>Comparison:</strong> <span id="comparison">Ready to transmute challenges into chromatic wisdom.</span></p>
-        </div>
-        <div class="card">
-            <div class="card-header">
-                <strong>Detailed Results:</strong>
-            </div>
-            <div class="card-body">
-                <pre id="formResults"></pre>
-            </div>
-        </div>
-    </div>
-
+    <div id="root"></div>
+    <script type="text/babel" src="colorPlotter.js"></script>
 </body>
 </html>
