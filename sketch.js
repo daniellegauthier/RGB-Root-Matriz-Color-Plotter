@@ -68,102 +68,128 @@ const similarityMatrix = {
 };
 
 function getColorData() {
-        return [
-            { color: 'grey', rgb: [170,170,170], direction: 'respectful effective apposite precary' },
-            { color: 'pink', rgb: [250,0,90], direction: 'incredibily exquisite and ambitious' },
-            { color: 'gold', rgb: [250,200,0], direction: 'undepartable preflorating technocracy lotiform' },
-            { color: 'nude', rgb: [250,180,120], direction: 'felicitously deft satisfied unextenuable' },
-            { color: 'orange', rgb: [250,110,0], direction: 'blurry artesian awesome' },
-            { color: 'white', rgb: [255,255,255], direction: 'unlavish analeptical' },
-            { color: 'blue', rgb: [0,0,255], direction: 'daintily perfect, intelligent photopathy' },
-            { color: 'green', rgb: [0,255,0], direction: 'bulbous spontaneous heroic' },
-            { color: 'red', rgb: [255,0,0], direction: 'candid apophantic, distinct and radiant' },
-            { color: 'black', rgb: [0,0,0], direction: 'undertreated paleoatavistic obeyable swabble' },
-            { color: 'brown', rgb: [180,50,0], direction: 'abundantly notable and unique submissive' },
-            { color: 'yellow', rgb: [255,255,0], direction: 'exhilerating redressible authority plausible' },
-            { color: 'purple', rgb: [180,50,255], direction: 'perfectly great - imaginative, brave, gifted' }
-        ];
+    return [
+        { color: 'grey', rgb: [170,170,170], direction: 'respectful effective apposite precary' },
+        { color: 'pink', rgb: [250,0,90], direction: 'incredibily exquisite and ambitious' },
+        { color: 'gold', rgb: [250,200,0], direction: 'undepartable preflorating technocracy lotiform' },
+        { color: 'nude', rgb: [250,180,120], direction: 'felicitously deft satisfied unextenuable' },
+        { color: 'orange', rgb: [250,110,0], direction: 'blurry artesian awesome' },
+        { color: 'white', rgb: [255,255,255], direction: 'unlavish analeptical' },
+        { color: 'blue', rgb: [0,0,255], direction: 'daintily perfect, intelligent photopathy' },
+        { color: 'green', rgb: [0,255,0], direction: 'bulbous spontaneous heroic' },
+        { color: 'red', rgb: [255,0,0], direction: 'candid apophantic, distinct and radiant' },
+        { color: 'black', rgb: [0,0,0], direction: 'undertreated paleoatavistic obeyable swabble' },
+        { color: 'brown', rgb: [180,50,0], direction: 'abundantly notable and unique submissive' },
+        { color: 'yellow', rgb: [255,255,0], direction: 'exhilerating redressible authority plausible' },
+        { color: 'purple', rgb: [180,50,255], direction: 'perfectly great - imaginative, brave, gifted' }
+    ];
+}
+
+function getPathwaySequences() {
+    return {
+        'pain': ['gold', 'orange'],
+        'practical': ['yellow', 'green'],
+        'spiritual': ['blue', 'brown'],
+        'prayer': ['nude', 'white'],
+        'sad': ['purple', 'grey', 'red'],
+        'precise': ['pink', 'black'],
+        'fem': ['brown', 'gold', 'orange', 'pink'],
+        'masc': ['red', 'blue', 'orange'],
+        'direct': ['red', 'orange']
+    };
+}
+
+// Function to get the direction for a color by name
+function getColorDirection(color) {
+    const colorData = getColorData();
+    const foundColor = colorData.find(c => c.color === color);
+    return foundColor ? foundColor.direction : '';
+}
+
+// Function to calculate dot product similarity for color sequences
+function rgbDistance(rgb1, rgb2) {
+    return Math.sqrt(
+        Math.pow(rgb1[0] - rgb2[0], 2) +
+        Math.pow(rgb1[1] - rgb2[1], 2) +
+        Math.pow(rgb1[2] - rgb2[2], 2)
+    );
+}
+
+function calculateDotProduct(sequence1, sequence2) {
+    let dotProduct = 0;
+    const minLength = Math.min(sequence1.length, sequence2.length);
+    for (let i = 0; i < minLength; i++) {
+        dotProduct += sequence1[i][0] * sequence2[i][0] +
+                      sequence1[i][1] * sequence2[i][1] +
+                      sequence1[i][2] * sequence2[i][2];
     }
+    return dotProduct;
+}
 
-    function getPathwaySequences() {
-        return {
-            'pain': ['gold', 'orange'],
-            'practical': ['yellow', 'green'],
-            'spiritual': ['blue', 'brown'],
-            'prayer': ['nude', 'white'],
-            'sad': ['purple', 'grey', 'red'],
-            'precise': ['pink', 'black'],
-            'fem': ['brown', 'gold', 'orange', 'pink'],
-            'masc': ['red', 'blue', 'orange'],
-            'direct': ['red', 'orange']
-        };
-    }
+// Function to get the color RGB values for a pathway
+function getColorSequenceRgb(pathway) {
+    const colorData = getColorData();
+    const pathwaySequence = getPathwaySequences()[pathway] || [];
+    return pathwaySequence.map(color => {
+        const foundColor = colorData.find(c => c.color === color);
+        return foundColor ? foundColor.rgb : [0, 0, 0];
+    });
+}
 
-    document.addEventListener('DOMContentLoaded', () => {
-        const colorTable = document.getElementById('colorTable').getElementsByTagName('tbody')[0];
-        const colorData = getColorData();
-        
-        // Populate table
-        colorData.forEach(data => {
-            const row = colorTable.insertRow();
-            row.innerHTML = `
-                <td style="background-color: rgb(${data.rgb.join(',')})${data.color === 'black' ? '; color: white' : ''}">${data.color}</td>
-                <td>${data.direction}</td>
-                <td><input type="text" id="${data.color}-pathway" name="${data.color}-input" class="color-input" placeholder="${data.direction}"></td>
-            `;
-        });
+// Function to get the closest pathway based on similarity score
+function getClosestPathway(selectedPathway) {
+    const allSequences = getPathwaySequences();
+    const selectedRgb = getColorSequenceRgb(selectedPathway);
+    let bestMatch = null;
+    let highestDotProduct = -Infinity;
 
-        const form = document.getElementById('colorForm');
-        const clearBtn = document.getElementById('clearBtn');
-        const saveBtn = document.getElementById('saveBtn');
-        const resultSpan = document.getElementById('result');
-        const comparisonSpan = document.getElementById('comparison');
-        const formContentPre = document.getElementById('formResults');
-
-        function createSentenceFromInputs(sequence) {
-            return sequence.map(color => {
-                const input = form.querySelector(`input[name="${color}-input"]`);
-                return input.value || input.placeholder;
-            }).join(' through ');
-        }
-
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const obstacle = document.getElementById('obstacle').value || '[no obstacle entered]';
-            const pathway = document.getElementById('pathway').value;
-            
-            let formContent = `RGB Root Matriz Color Plotter Results\n\n`;
-            formContent += `Obstacle: ${obstacle}\nPathway: ${pathway || '[no pathway selected]'}\n\n`;
-            
-            if (pathway) {
-                const pathwaySequences = getPathwaySequences();
-                const sequence = pathwaySequences[pathway];
-                
-                const sentencePath = createSentenceFromInputs(sequence);
-                formContent += `Suggested Direction:\n${sentencePath}\n\n`;
-                
-                formContent += `Color Sequence Analysis:\n`;
-                for (let i = 0; i < sequence.length - 1; i++) {
-                    const similarity = similarityMatrix[sequence[i]][sequence[i+1]];
-                    formContent += `${sequence[i].toUpperCase()} to ${sequence[i+1].toUpperCase()}: ${(similarity * 100).toFixed(1)}% resonance\n`;
-                }
-                formContent += '\n';
+    for (const [pathway, sequence] of Object.entries(allSequences)) {
+        if (pathway !== selectedPathway) {
+            const currentRgb = getColorSequenceRgb(pathway);
+            const dotProduct = calculateDotProduct(selectedRgb, currentRgb);
+            if (dotProduct > highestDotProduct) {
+                highestDotProduct = dotProduct;
+                bestMatch = pathway;
             }
-            
-            formContent += `Individual Color Interpretations:\n`;
-            colorData.forEach(data => {
-                const input = form.querySelector(`input[name="${data.color}-input"]`);
-                const userInput = input.value || input.placeholder;
-                formContent += `${data.color.toUpperCase()}:\n  Original: ${data.direction}\n  Your interpretation: ${userInput}\n\n`;
-            });
-            
-            resultSpan.innerText = pathway ? `Path: ${createSentenceFromInputs(pathwaySequences[pathway])}` : 'Awaiting your journey through color...';
-            comparisonSpan.innerText = obstacle !== '[no obstacle entered]' ? 
-                `Transforming "${obstacle}" through the wisdom of color relationships` : 
-                'Ready to transmute challenges into chromatic wisdom.';
-            
-            formContentPre.innerText = formContent;
+        }
+    }
+
+    return { bestMatch, similarityScore: highestDotProduct };
+}
+
+// Function to generate healing suggestion sentences
+function generateHealingSentences() {
+    const pathways = getPathwaySequences();
+    const sentences = [];
+
+    for (const [pathway, colors] of Object.entries(pathways)) {
+        let sentence = `Let's create `;
+        colors.forEach((color, index) => {
+            const direction = getColorDirection(color);
+            sentence += direction;
+            if (index < colors.length - 1) sentence += ' with ';
         });
+        sentence += `. This aligns with the notion of "${pathway}".`;
+
+        // Calculate the closest pathway based on similarity
+        const { bestMatch, similarityScore } = getClosestPathway(pathway);
+        sentence += ` The closest sequence is "${bestMatch}" with a similarity score of ${similarityScore.toFixed(4)}.`;
+
+        sentences.push(sentence);
+    }
+
+    return sentences;
+}
+
+// Example: Generate sentences and display them
+function displayHealingSentences() {
+    const sentences = generateHealingSentences();
+    sentences.forEach(sentence => {
+        console.log(sentence); // Replace this with a UI element in your actual form
+    });
+}
+
+displayHealingSentences(); // Call this when you want to generate and display the sentences
 
         clearBtn.addEventListener('click', () => {
             form.reset();
