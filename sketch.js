@@ -232,50 +232,90 @@ document.addEventListener('DOMContentLoaded', () => {
         return healingContent;
     }
 
+    // Function to get color directions
+    function getColorData() {
+        return [
+            { color: 'grey', direction: 'respectful effective apposite precary' },
+            { color: 'pink', direction: 'incredibily exquisite and ambitious' },
+            { color: 'gold', direction: 'undepartable preflorating technocracy lotiform' },
+            { color: 'nude', direction: 'felicitously deft satisfied unextenuable' },
+            { color: 'orange', direction: 'blurry artesian awesome' },
+            { color: 'white', direction: 'unlavish analeptical' },
+            { color: 'blue', direction: 'daintily perfect, intelligent photopathy' },
+            { color: 'green', direction: 'bulbous spontaneous heroic' },
+            { color: 'red', direction: 'candid apophantic, distinct and radiant' },
+            { color: 'black', direction: 'undertreated paleoatavistic obeyable swabble' },
+            { color: 'brown', direction: 'abundantly notable and unique submissive' },
+            { color: 'yellow', direction: 'exhilerating redressible authority plausible' },
+            { color: 'purple', direction: 'perfectly great - imaginative, brave, gifted' }
+        ];
+    }
+
+    // Function to calculate similarity between two colors using the similarity matrix
+    function calculateSimilarity(color1, color2) {
+        if (similarityMatrix[color1] && similarityMatrix[color1][color2] !== undefined) {
+            return similarityMatrix[color1][color2];
+        }
+        return 0; // Return 0 if no similarity is found
+    }
+
+    // Function to calculate the total similarity of a pathway based on the colors in the pathway
+    function calculatePathwaySimilarity(selectedColors) {
+        let totalSimilarity = 0;
+        const colors = Object.keys(similarityMatrix); // Available colors in the matrix
+
+        // Compare each selected color to all available colors
+        selectedColors.forEach(selectedColor => {
+            let maxSimilarity = 0;
+            colors.forEach(color => {
+                const similarity = calculateSimilarity(selectedColor, color);
+                if (similarity > maxSimilarity) {
+                    maxSimilarity = similarity;
+                }
+            });
+            totalSimilarity += maxSimilarity;
+        });
+
+        return totalSimilarity / selectedColors.length; // Return average similarity
+    }
+
+    // Form submission handling
+    const form = document.getElementById('colorForm');
+    const resultSpan = document.getElementById('result');
+    const comparisonSpan = document.getElementById('comparison');
+    const formContentPre = document.getElementById('formResults');
+
     form.addEventListener('submit', (e) => {
         e.preventDefault();
         const obstacle = document.getElementById('obstacle').value || '[no obstacle entered]';
-        const pathway = document.getElementById('pathway').value;
+        const pathway = document.getElementById('pathway').value || '[no pathway selected]';
         
-        let formContent = `RGB Root Matriz Color Plotter Results\n\n`;
-        formContent += `Obstacle: ${obstacle}\nPathway: ${pathway || '[no pathway selected]'}\n\n`;
-        
-        if (pathway) {
-            const pathwaySequences = getPathwaySequences();
-            const sequence = pathwaySequences[pathway];
+        let formContent = `Obstacle: ${obstacle}\nPathway: ${pathway}\n\nFormulated Relationships:\n\n`;
+        const selectedColors = [];
+
+        const colorData = getColorData();
+        colorData.forEach(data => {
+            const input = document.querySelector(`input[name="${data.color}-input"]`);
+            let userInput = input ? input.value || input.placeholder : '[No user input]';
             
-            const sentencePath = createSentenceFromInputs(sequence);
-            formContent += `Suggested Direction:\n${sentencePath}\n\n`;
+            formContent += `${data.color.toUpperCase()}:\nYour interpretation: ${userInput}\nDirection: ${data.direction}\n\n`;
             
-            formContent += `Color Sequence Analysis:\n`;
-            for (let i = 0; i < sequence.length - 1; i++) {
-                const similarity = similarityMatrix[sequence[i]][sequence[i+1]];
-                formContent += `${sequence[i].toUpperCase()} to ${sequence[i+1].toUpperCase()}: ${(similarity * 100).toFixed(1)}% resonance\n`;
-            }
-            formContent += '\n';
-        }
-        
-        formContent += `Individual Color Interpretations:\n`;
-        getColorData().forEach(data => {
-            const input = form.querySelector(`input[name="${data.color}-input"]`);
-            const userInput = input.value || input.placeholder;
-            formContent += `${data.color.toUpperCase()}:\n  Original: ${data.direction}\n  Your interpretation: ${userInput}\n\n`;
+            // Add selected color to the list
+            selectedColors.push(data.color);
         });
-        
-        // Add healing suggestions to the form content
-        formContent += updateHealingSuggestions();
-        
-        resultSpan.innerText = pathway ? 
-            `Path: ${createSentenceFromInputs(pathwaySequences[pathway])}` : 
+
+        // Calculate similarity score based on selected colors
+        const similarityScore = calculatePathwaySimilarity(selectedColors);
+
+        resultSpan.innerText = pathway !== '[no pathway selected]' ? 
+            `Exploring "${pathway}" pathway...` : 
             'Awaiting your journey through color...';
         
-        comparisonSpan.innerText = obstacle !== '[no obstacle entered]' ? 
-            `Transforming "${obstacle}" through the wisdom of color relationships` : 
-            'Ready to transmute challenges into chromatic wisdom.';
+        comparisonSpan.innerText = `Similarity score for selected pathway: ${similarityScore.toFixed(4)}`;
         
         formContentPre.innerText = formContent;
     });
-
+    
     clearBtn.addEventListener('click', () => {
         form.reset();
         formContentPre.innerText = '';
