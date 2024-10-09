@@ -285,36 +285,37 @@ document.addEventListener('DOMContentLoaded', () => {
     const comparisonSpan = document.getElementById('comparison');
     const formContentPre = document.getElementById('formResults');
 
-    form.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const obstacle = document.getElementById('obstacle').value || '[no obstacle entered]';
-        const pathway = document.getElementById('pathway').value || '[no pathway selected]';
-        
-        let formContent = `Obstacle: ${obstacle}\nPathway: ${pathway}\n\nFormulated Relationships:\n\n`;
-        const selectedColors = [];
+   form.addEventListener('submit', (e) => {
+    e.preventDefault();
 
-        const colorData = getColorData();
-        colorData.forEach(data => {
-            const input = document.querySelector(`input[name="${data.color}-input"]`);
-            let userInput = input ? input.value || input.placeholder : '[No user input]';
-            
-            formContent += `${data.color.toUpperCase()}:\nYour interpretation: ${userInput}\nDirection: ${data.direction}\n\n`;
-            
-            // Add selected color to the list
-            selectedColors.push(data.color);
-        });
+    const obstacle = document.getElementById('obstacle').value || '[no obstacle entered]';
+    const pathway = document.getElementById('pathway').value || '[no pathway selected]';
 
-        // Calculate similarity score based on selected colors
-        const similarityScore = calculatePathwaySimilarity(selectedColors);
+    let formContent = `Obstacle: ${obstacle}\nPathway: ${pathway}\n\nFormulated Relationships:\n\n`;
 
-        resultSpan.innerText = pathway !== '[no pathway selected]' ? 
-            `Exploring "${pathway}" pathway...` : 
-            'Awaiting your journey through color...';
+    const colorData = getColorData();
+    colorData.forEach(data => {
+        const input = document.querySelector(`input[name="${data.color}-input"]`);
+        // Use input value or fallback to default "placeholder" if no user input provided
+        let userInput = input && input.value.trim() ? input.value : input.placeholder;
         
-        comparisonSpan.innerText = `Similarity score for selected pathway: ${similarityScore.toFixed(4)}`;
-        
-        formContentPre.innerText = formContent;
+        // Get the closest match for each color
+        const { bestMatch, highestScore } = getClosestColor(data.color);
+
+        formContent += `${data.color.toUpperCase()}:\nYour interpretation: ${userInput}\nDirection: ${data.direction}\nClosest Match: ${bestMatch} with similarity score of ${highestScore.toFixed(6)}\n\n`;
     });
+
+    // Display the results
+    resultSpan.innerText = pathway !== '[no pathway selected]' ? 
+        `Exploring "${pathway}" pathway...` : 
+        'Awaiting your journey through color...';
+
+    comparisonSpan.innerText = obstacle !== '[no obstacle entered]' ? 
+        `Transforming "${obstacle}" through chromatic resonance...` :
+        'Ready to transmute your challenges into chromatic wisdom.';
+
+    formContentPre.innerText = formContent;
+});
     
     clearBtn.addEventListener('click', () => {
         form.reset();
