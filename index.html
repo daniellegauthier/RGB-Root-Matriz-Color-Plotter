@@ -166,59 +166,44 @@
             document.getElementById('similarColors').classList.remove('hidden');
         }
 
-        // Event Listeners
-        document.addEventListener('DOMContentLoaded', () => {
-            const matrice1Btn = document.getElementById('matrice1Btn');
-            const englishBtn = document.getElementById('englishBtn');
-            const form = document.getElementById('colorForm');
-            const clearBtn = document.getElementById('clearBtn');
+      // Event Listeners
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('colorForm');
 
-            matrice1Btn.onclick = () => {
-                currentVersion = 'matrice1';
-                matrice1Btn.className = 'px-4 py-2 bg-blue-500 text-white rounded mr-2';
-                englishBtn.className = 'px-4 py-2 bg-gray-300 text-gray-700 rounded';
-                updateUI();
-            };
+    // Function to handle result generation
+    form.onsubmit = (e) => {
+        e.preventDefault();
+        const obstacle = document.getElementById('obstacle').value;
+        const pathway = document.getElementById('pathway').value;
 
-            englishBtn.onclick = () => {
-                currentVersion = 'english-words';
-                englishBtn.className = 'px-4 py-2 bg-blue-500 text-white rounded';
-                matrice1Btn.className = 'px-4 py-2 bg-gray-300 text-gray-700 rounded mr-2';
-                updateUI();
-            };
+        // Select relevant colors for the pathway
+        const relevantColors = pathways[pathway] || [];
 
-            clearBtn.onclick = () => {
-                form.reset();
-                document.getElementById('results').classList.add('hidden');
-                document.getElementById('similarColors').classList.add('hidden');
-                const allColorDivs = document.querySelectorAll('#colorGrid > div');
-                allColorDivs.forEach(div => {
-                    div.className = div.className.replace(' border-blue-500 border-2', '');
-                });
-            };
-
-            form.onsubmit = (e) => {
-                e.preventDefault();
-                const obstacle = document.getElementById('obstacle').value;
-                const pathway = document.getElementById('pathway').value;
-
-                let resultText = `${obstacle ? `Obstacle: ${obstacle}` : '[no obstacle entered]'}\n`;
-                resultText += `${pathway ? `Pathway: ${pathway}` : '[no pathway selected]'}\n\n`;
-                
-                colorData.forEach(({ color, matrice1, 'english-words': englishWords }) => {
-                    const input = document.querySelector(`#colorGrid > div[data-color="${color}"] input`);
-                    resultText += `${color.toUpperCase()}:\n`;
-                    resultText += `Your interpretation: ${input.value || '[no input]'}\n`;
-                    resultText += `${currentVersion === 'matrice1' ? 'Matrice1' : 'English Words'}: ${currentVersion === 'matrice1' ? matrice1 : englishWords}\n\n`;
-                });
-
-                document.getElementById('resultContent').textContent = resultText;
-                document.getElementById('results').classList.remove('hidden');
-            };
-
-            // Initialize UI
-            updateUI();
+        // Generate results based on relevant colors
+        let resultText = `Sequencing Result:\n\n`;
+        relevantColors.forEach(color => {
+            const colorInfo = colorData.find(c => c.color === color);
+            const input = document.querySelector(`#colorGrid > div[data-color="${color}"] input`).value || '[no input]';
+            
+            resultText += `${color.toUpperCase()}:\n`;
+            resultText += `Your interpretation: ${input}\n`;
+            resultText += `Matrice1: ${colorInfo.matrice1}\n\n`;
         });
+
+        // Example of how to add dot product and percentile
+        resultText += `Comparison: "${obstacle}" has a normalized dot product of 97700.0000. Percentile: 87.50% amongst other matches\n\n`;
+        
+        // Example of pathway analysis
+        resultText += `Pain to Gain: let's maybe use inspiration from "Who do you connect with?" to address the pain from "How are you hit?"\n`;
+
+        // Display the result
+        document.getElementById('resultContent').textContent = resultText;
+        document.getElementById('results').classList.remove('hidden');
+    };
+
+    // Initialize the UI
+    updateUI();
+});
     </script>
 </body>
 </html>
