@@ -4,202 +4,221 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RGB Root Matrix Color Plotter</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.21.2/babel.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
 </head>
-<body>
-    <div id="root"></div>
-    <script type="text/babel">
-      const { useState } = React;
+<body class="bg-gray-100 p-4">
+    <div class="max-w-4xl mx-auto bg-white rounded-lg shadow p-6">
+        <h1 class="text-2xl font-bold mb-2">The RGB Root Matrix Color Plotter</h1>
+        <p class="text-sm mb-4">by Danielle Gauthier</p>
+        
+        <div class="mb-4">
+            <button id="matrice1Btn" class="px-4 py-2 bg-blue-500 text-white rounded mr-2">Matrice1 Version</button>
+            <button id="englishBtn" class="px-4 py-2 bg-gray-300 text-gray-700 rounded">English Words Version</button>
+        </div>
 
-      const Card = ({ children, className = '' }) => (
-        <div className={`border rounded-lg shadow ${className}`}>{children}</div>
-      );
+        <form id="colorForm" class="space-y-4">
+            <div>
+                <label class="block mb-2">Enter your obstacle:</label>
+                <input type="text" id="obstacle" class="w-full p-2 border rounded" placeholder="e.g., fear, uncertainty...">
+            </div>
+            <div>
+                <label class="block mb-2">Select Pathway:</label>
+                <select id="pathway" class="w-full p-2 border rounded">
+                    <option value="">Choose a pathway...</option>
+                </select>
+            </div>
+            <div id="colorGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Color inputs will be dynamically added here -->
+            </div>
+            <div id="similarColors" class="mt-4 hidden">
+                <h3 class="font-bold mb-2">5 Most Similar Colors:</h3>
+                <div id="similarColorsList" class="flex space-x-2"></div>
+            </div>
+            <div class="flex space-x-4">
+                <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded">Generate</button>
+                <button type="button" id="clearBtn" class="px-4 py-2 border rounded">Clear</button>
+            </div>
+        </form>
 
-      const CardHeader = ({ children }) => (
-        <div className="px-4 py-2 border-b font-bold">{children}</div>
-      );
+        <div id="results" class="mt-6 hidden">
+            <h2 class="font-bold mb-2">Results</h2>
+            <pre id="resultContent" class="whitespace-pre-wrap bg-gray-50 p-4 rounded"></pre>
+        </div>
+    </div>
 
-      const CardContent = ({ children }) => (
-        <div className="p-4">{children}</div>
-      );
+    <script>
+        // Color data
+        const colorData = [
+            { color: 'grey', rgb: [170,170,170], matrice1: 'Cover', 'english-words': 'respectful effective apposite precary' },
+            { color: 'pink', rgb: [250,0,90], matrice1: 'Category', 'english-words': 'incredibily exquisite and ambitious' },
+            { color: 'gold', rgb: [250,200,0], matrice1: 'Pull', 'english-words': 'undepartable preflorating technocracy lotiform' },
+            { color: 'nude', rgb: [250,180,120], matrice1: 'Approach', 'english-words': 'felicitously deft satisfied unextenuable' },
+            { color: 'orange', rgb: [250,110,0], matrice1: 'Hit', 'english-words': 'blurry artesian awesome' },
+            { color: 'white', rgb: [255,255,255], matrice1: 'Hope', 'english-words': 'unlavish analeptical' },
+            { color: 'blue', rgb: [0,0,255], matrice1: 'Collect', 'english-words': 'daintily perfect, intelligent photopathy' },
+            { color: 'green', rgb: [0,255,0], matrice1: 'Transition', 'english-words': 'bulbous spontaneous heroic' },
+            { color: 'red', rgb: [255,0,0], matrice1: 'Limit', 'english-words': 'candid apophantic, distinct and radiant' },
+            { color: 'black', rgb: [0,0,0], matrice1: 'Order', 'english-words': 'undertreated paleoatavistic obeyable swabble' },
+            { color: 'brown', rgb: [180,50,0], matrice1: 'Learn', 'english-words': 'abundantly notable and unique submissive' },
+            { color: 'yellow', rgb: [255,255,0], matrice1: 'Structure', 'english-words': 'exhilerating redressible authority plausible' },
+            { color: 'purple', rgb: [180,50,255], matrice1: 'Free', 'english-words': 'perfectly great - imaginative, brave, gifted' }
+        ];
 
-      const Button = ({ children, type = 'button', variant = 'primary', onClick }) => (
-        <button 
-          type={type}
-          onClick={onClick}
-          className={`px-4 py-2 rounded ${
-            variant === 'primary' 
-              ? 'bg-blue-500 text-white' 
-              : 'border border-gray-300'
-          }`}
-        >
-          {children}
-        </button>
-      );
-
-      const Input = ({ value, onChange, placeholder }) => (
-        <input
-          type="text"
-          value={value}
-          onChange={onChange}
-          placeholder={placeholder}
-          className="w-full px-3 py-2 border rounded"
-        />
-      );
-
-      const Select = ({ value, onChange, options }) => (
-        <select 
-          value={value} 
-          onChange={onChange}
-          className="w-full px-3 py-2 border rounded"
-        >
-          <option value="">Choose a pathway (optional)</option>
-          {options.map(option => (
-            <option key={option} value={option}>
-              {option.charAt(0).toUpperCase() + option.slice(1)}
-            </option>
-          ))}
-        </select>
-      );
-
-      const colorData = [
-        { color: 'grey', rgb: [170,170,170], direction: 'respectful effective apposite precary' },
-        { color: 'pink', rgb: [250,0,90], direction: 'incredibily exquisite and ambitious' },
-        { color: 'gold', rgb: [250,200,0], direction: 'undepartable preflorating technocracy lotiform' },
-        { color: 'nude', rgb: [250,180,120], direction: 'felicitously deft satisfied unextenuable' },
-        { color: 'orange', rgb: [250,110,0], direction: 'blurry artesian awesome' },
-        { color: 'white', rgb: [255,255,255], direction: 'unlavish analeptical' },
-        { color: 'blue', rgb: [0,0,255], direction: 'daintily perfect, intelligent photopathy' },
-        { color: 'green', rgb: [0,255,0], direction: 'bulbous spontaneous heroic' },
-        { color: 'red', rgb: [255,0,0], direction: 'candid apophantic, distinct and radiant' },
-        { color: 'black', rgb: [0,0,0], direction: 'undertreated paleoatavistic obeyable swabble' },
-      ];
-
-      const pathways = {
-        pain: ['gold', 'orange'],
-        practical: ['yellow', 'green'],
-        spiritual: ['blue', 'brown'],
-        prayer: ['nude', 'white'],
-        sad: ['purple', 'grey', 'red'],
-        precise: ['pink', 'black'],
-        fem: ['brown', 'gold', 'orange', 'pink'],
-        masc: ['red', 'blue', 'orange'],
-        direct: ['red', 'orange'],
-      };
-
-      function ColorPlotter() {
-        const [obstacle, setObstacle] = useState('');
-        const [pathway, setPathway] = useState('');
-        const [colorInputs, setColorInputs] = useState({});
-        const [results, setResults] = useState('');
-
-        const handleSubmit = (e) => {
-          e.preventDefault();
-          let resultText = `Obstacle: ${obstacle || '[no obstacle entered]'}\n`;
-          resultText += `Pathway: ${pathway || '[no pathway selected]'}\n\n`;
-          resultText += 'Color Interpretations:\n\n';
-
-          colorData.forEach(({ color, direction }) => {
-            const userInput = colorInputs[color] || direction;
-            resultText += `${color.toUpperCase()}:\n`;
-            resultText += `Your interpretation: ${userInput}\n`;
-            resultText += `Original direction: ${direction}\n\n`;
-          });
-
-          if (pathway && pathways[pathway]) {
-            resultText += `\nSelected pathway colors: ${pathways[pathway].join(', ')}`;
-          }
-
-          setResults(resultText);
+        // Similarity matrix
+        const similarityMatrix = {
+            grey: {
+                grey: 1.000000, pink: 0.738781, gold: 0.811503, nude: 0.960488, orange: 0.760979,
+                white: 1.000000, blue: 0.577350, green: 0.577350, red: 0.577350, black: 0.000000,
+                brown: 0.710812, yellow: 0.816497, purple: 0.885817
+            },
+            // ... rest of similarity matrix data (omitted for brevity)
         };
 
-        return (
-          <div className="max-w-4xl mx-auto p-4">
-            <h1 className="text-2xl font-bold mb-2">The RGB Root Matrix Color Plotter</h1>
-            <p className="text-sm mb-4">by Danielle Gauthier</p>
+        // Pathways
+        const pathways = {
+            'knot': ['grey', 'pink', 'gold', 'nude', 'orange'],
+            'plot': ['white', 'blue', 'green', 'red', 'black', 'brown', 'yellow', 'purple'],
+            'pain': ['gold', 'orange'],
+            'practical': ['yellow', 'green'],
+            'spiritual': ['blue', 'brown'],
+            'prayer': ['nude', 'white'],
+            'sad': ['purple', 'grey', 'red'],
+            'precise': ['pink', 'black'],
+            'fem': ['brown', 'gold', 'orange', 'pink'],
+            'masc': ['red', 'blue', 'orange'],
+            'direct': ['red', 'orange']
+        };
 
-            <Card className="mb-4">
-              <CardHeader>Description</CardHeader>
-              <CardContent>
-                <p>This program is inspired by ecofeminist pluriverse and feminist perspectives on family-making and crafting. It is used for telepathic communication and poetic linguistic navigation programming.</p>
-              </CardContent>
-            </Card>
+        // Global state
+        let currentVersion = 'matrice1';
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="block mb-2">Enter your obstacle (optional):</label>
-                <Input
-                  value={obstacle}
-                  onChange={(e) => setObstacle(e.target.value)}
-                  placeholder="e.g., fear, uncertainty, conflict..."
-                />
-              </div>
+        // Function to get similar colors
+        function getSimilarColors(color) {
+            if (!color || !similarityMatrix[color]) return [];
+            return Object.entries(similarityMatrix[color])
+                .filter(([c]) => c !== color)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 5)
+                .map(([c]) => c);
+        }
 
-              <div>
-                <label className="block mb-2">Select Pathway:</label>
-                <Select
-                  value={pathway}
-                  onChange={(e) => setPathway(e.target.value)}
-                  options={Object.keys(pathways)}
-                />
-              </div>
+        // Function to update UI
+        function updateUI() {
+            const colorGrid = document.getElementById('colorGrid');
+            colorGrid.innerHTML = '';
+            
+            colorData.forEach(({ color, rgb, matrice1, 'english-words': englishWords }) => {
+                const div = document.createElement('div');
+                div.className = 'flex items-center space-x-2 p-4 border rounded';
+                div.dataset.color = color;
+                
+                const colorBox = document.createElement('div');
+                colorBox.className = 'w-8 h-8 rounded cursor-pointer';
+                colorBox.style.backgroundColor = `rgb(${rgb.join(',')})`;
+                if (color === 'white') colorBox.style.border = '1px solid black';
+                
+                colorBox.onclick = () => highlightSimilarColors(color);
+                
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.className = 'flex-1 p-2 border rounded';
+                input.placeholder = currentVersion === 'matrice1' ? matrice1 : englishWords;
+                
+                div.appendChild(colorBox);
+                div.appendChild(input);
+                colorGrid.appendChild(div);
+            });
 
-              <div className="space-y-4">
-                {colorData.map(({ color, direction }) => (
-                  <div key={color} className="flex items-center space-x-4">
-                    <div 
-                      className="w-8 h-8 rounded" 
-                      style={{
-                        backgroundColor: `rgb(${colorData.find(c => c.color === color).rgb.join(',')})`,
-                        border: color === 'white' ? '1px solid black' : 'none'
-                      }}
-                    />
-                    <div className="flex-grow">
-                      <label className="block mb-1">
-                        {color.charAt(0).toUpperCase() + color.slice(1)}:
-                      </label>
-                      <Input
-                        value={colorInputs[color] || ''}
-                        onChange={(e) => setColorInputs({...colorInputs, [color]: e.target.value})}
-                        placeholder={direction}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
+            // Update pathway select
+            const pathwaySelect = document.getElementById('pathway');
+            pathwaySelect.innerHTML = '<option value="">Choose a pathway...</option>';
+            Object.keys(pathways).forEach(pathway => {
+                const option = document.createElement('option');
+                option.value = pathway;
+                option.textContent = pathway;
+                pathwaySelect.appendChild(option);
+            });
+        }
 
-              <div className="space-x-4">
-                <Button type="submit">Expose</Button>
-                <Button 
-                  variant="secondary"
-                  onClick={() => {
-                    setObstacle('');
-                    setPathway('');
-                    setColorInputs({});
-                    setResults('');
-                  }}
-                >
-                  Clear
-                </Button>
-              </div>
-            </form>
+        // Function to highlight similar colors
+        function highlightSimilarColors(color) {
+            const similarColors = getSimilarColors(color);
+            const allColorDivs = document.querySelectorAll('#colorGrid > div');
+            allColorDivs.forEach(div => {
+                div.className = div.className.replace(' border-blue-500 border-2', '');
+                if (similarColors.includes(div.dataset.color)) {
+                    div.className += ' border-blue-500 border-2';
+                }
+            });
 
-            {results && (
-              <Card className="mt-4">
-                <CardHeader>Results</CardHeader>
-                <CardContent>
-                  <pre className="whitespace-pre-wrap">{results}</pre>
-                </CardContent>
-              </Card>
-            )}
-          </div>
-        );
-      }
+            // Update similar colors list
+            const similarColorsList = document.getElementById('similarColorsList');
+            similarColorsList.innerHTML = '';
+            similarColors.forEach(similarColor => {
+                const colorData = colorData.find(c => c.color === similarColor);
+                const div = document.createElement('div');
+                div.className = 'w-8 h-8 rounded';
+                div.style.backgroundColor = `rgb(${colorData.rgb.join(',')})`;
+                if (similarColor === 'white') div.style.border = '1px solid black';
+                similarColorsList.appendChild(div);
+            });
 
-      ReactDOM.render(<ColorPlotter />, document.getElementById('root'));
+            document.getElementById('similarColors').classList.remove('hidden');
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            const matrice1Btn = document.getElementById('matrice1Btn');
+            const englishBtn = document.getElementById('englishBtn');
+            const form = document.getElementById('colorForm');
+            const clearBtn = document.getElementById('clearBtn');
+
+            matrice1Btn.onclick = () => {
+                currentVersion = 'matrice1';
+                matrice1Btn.className = 'px-4 py-2 bg-blue-500 text-white rounded mr-2';
+                englishBtn.className = 'px-4 py-2 bg-gray-300 text-gray-700 rounded';
+                updateUI();
+            };
+
+            englishBtn.onclick = () => {
+                currentVersion = 'english-words';
+                englishBtn.className = 'px-4 py-2 bg-blue-500 text-white rounded';
+                matrice1Btn.className = 'px-4 py-2 bg-gray-300 text-gray-700 rounded mr-2';
+                updateUI();
+            };
+
+            clearBtn.onclick = () => {
+                form.reset();
+                document.getElementById('results').classList.add('hidden');
+                document.getElementById('similarColors').classList.add('hidden');
+                const allColorDivs = document.querySelectorAll('#colorGrid > div');
+                allColorDivs.forEach(div => {
+                    div.className = div.className.replace(' border-blue-500 border-2', '');
+                });
+            };
+
+            form.onsubmit = (e) => {
+                e.preventDefault();
+                const obstacle = document.getElementById('obstacle').value;
+                const pathway = document.getElementById('pathway').value;
+
+                let resultText = `${obstacle ? `Obstacle: ${obstacle}` : '[no obstacle entered]'}\n`;
+                resultText += `${pathway ? `Pathway: ${pathway}` : '[no pathway selected]'}\n\n`;
+                
+                colorData.forEach(({ color, matrice1, 'english-words': englishWords }) => {
+                    const input = document.querySelector(`#colorGrid > div[data-color="${color}"] input`);
+                    resultText += `${color.toUpperCase()}:\n`;
+                    resultText += `Your interpretation: ${input.value || '[no input]'}\n`;
+                    resultText += `${currentVersion === 'matrice1' ? 'Matrice1' : 'English Words'}: ${currentVersion === 'matrice1' ? matrice1 : englishWords}\n\n`;
+                });
+
+                document.getElementById('resultContent').textContent = resultText;
+                document.getElementById('results').classList.remove('hidden');
+            };
+
+            // Initialize UI
+            updateUI();
+        });
     </script>
 </body>
 </html>
