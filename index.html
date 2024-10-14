@@ -354,7 +354,17 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('resultContent').textContent = resultText;
         document.getElementById('results').classList.remove('hidden');
     };
- // Save button functionality
+ // Clear button functionality
+        clearBtn.onclick = () => {
+            document.getElementById('obstacle').value = '';
+            document.getElementById('pathway').value = '';
+            document.querySelectorAll('#colorGrid input').forEach(input => {
+                input.value = '';
+            });
+            document.getElementById('results').classList.add('hidden');
+        };
+
+        // Save button functionality
         saveBtn.onclick = () => {
             const obstacle = document.getElementById('obstacle').value;
             const pathway = document.getElementById('pathway').value;
