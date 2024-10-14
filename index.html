@@ -13,7 +13,7 @@
          <h1 class="my-4">The RGB Root Matriz Color Plotter</h1>
     <p>by Danielle Gauthier</p>
     <p>This program is inspired by the ecofeminist pluriverse and feminist perspectives on family-making and crafting. It is used for telepathic communication and other forms of poetic linguistic navigation programming. To use this deterministic model for sequence optimization:</p>
-  <ol>
+  <ol class="list-decimal list-inside mb-4">
     <li>Enter an obstacle in the first textbox.</li>
     <li>Select the type of "problem" you have by indicating the solution you want to find.</li>
     <li>Answer the reference questions.</li>
@@ -45,6 +45,7 @@
             <div class="flex space-x-4">
                 <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded">Generate</button>
                 <button type="button" id="clearBtn" class="px-4 py-2 border rounded">Clear</button>
+                 <button type="button" id="saveBtn" class="px-4 py-2 bg-green-500 text-white rounded">Save</button>           
             </div>
         </form>
 
@@ -75,8 +76,8 @@
 
         // Pathways
         const pathways = {
-            'knot': ['grey', 'pink', 'gold', 'nude', 'orange'],
-            'plot': ['white', 'blue', 'green', 'red', 'black', 'brown', 'yellow', 'purple'],
+            'plot': ['grey', 'pink', 'gold', 'nude', 'orange'],
+            'knot': ['white', 'blue', 'green', 'red', 'black', 'brown', 'yellow', 'purple'],
             'pain': ['gold', 'orange'],
             'practical': ['yellow', 'green'],
             'spiritual': ['blue', 'brown'],
@@ -342,7 +343,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const inputs = {};
         document.querySelectorAll('#colorGrid > div').forEach(div => {
             const color = div.dataset.color;
-            const input = div.querySelector('input').value;
+            const input = div.querySelector('input').value;xdrea
             inputs[color] = input;
         });
 
@@ -353,10 +354,39 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('resultContent').textContent = resultText;
         document.getElementById('results').classList.remove('hidden');
     };
+ // Save button functionality
+        saveBtn.onclick = () => {
+            const obstacle = document.getElementById('obstacle').value;
+            const pathway = document.getElementById('pathway').value;
+            const inputs = {};
+            document.querySelectorAll('#colorGrid > div').forEach(div => {
+                const color = div.dataset.color;
+                const input = div.querySelector('input').value;
+                inputs[color] = input;
+            });
 
-    // Initialize the UI
-    updateUI();
-});
+            const saveData = {
+                obstacle,
+                pathway,
+                inputs,
+                version: currentVersion,
+                result: document.getElementById('resultContent').textContent
+            };
+
+            const blob = new Blob([JSON.stringify(saveData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'rgb_root_matrix_plotter_data.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        };
+
+        // Initialize the UI
+        updateUI();
+    });
   </script>
 </body>
 </html>
