@@ -334,6 +334,29 @@ document.addEventListener('DOMContentLoaded', () => {
         return statements[pathway] ? statements[pathway]() : `let's maybe explore the connection between ${getColorPhrase(relevantColors[0])} and ${getColorPhrase(relevantColors[1])} in this ${pathway}.`;
     }
     // Event listener for form submission
+      // Event Listeners
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('colorForm');
+        const matrice1Btn = document.getElementById('matrice1Btn');
+        const englishBtn = document.getElementById('englishBtn');
+        const saveBtn = document.getElementById('saveBtn');
+        const clearBtn = document.getElementById('clearBtn');
+
+        // Toggle between Matrice1 and English Words versions
+        matrice1Btn.onclick = () => {
+            currentVersion = 'matrice1';
+            updateUI();
+            matrice1Btn.className = matrice1Btn.className.replace('bg-gray-300 text-gray-700', 'bg-blue-500 text-white');
+            englishBtn.className = englishBtn.className.replace('bg-blue-500 text-white', 'bg-gray-300 text-gray-700');
+        };
+
+        englishBtn.onclick = () => {
+            currentVersion = 'english-words';
+            updateUI();
+            englishBtn.className = englishBtn.className.replace('bg-gray-300 text-gray-700', 'bg-blue-500 text-white');
+            matrice1Btn.className = matrice1Btn.className.replace('bg-blue-500 text-white', 'bg-gray-300 text-gray-700');
+        };
+
     form.onsubmit = (e) => {
         e.preventDefault();
         const obstacle = document.getElementById('obstacle').value;
