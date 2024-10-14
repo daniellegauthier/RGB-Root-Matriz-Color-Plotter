@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,7 +14,7 @@
          <h1 class="my-4">The RGB Root Matriz Color Plotter</h1>
     <p>by Danielle Gauthier</p>
     <p>This program is inspired by the ecofeminist pluriverse and feminist perspectives on family-making and crafting. It is used for telepathic communication and other forms of poetic linguistic navigation programming. To use this deterministic model for sequence optimization:</p>
-  <ol class="list-decimal list-inside mb-4">
+  <ol>
     <li>Enter an obstacle in the first textbox.</li>
     <li>Select the type of "problem" you have by indicating the solution you want to find.</li>
     <li>Answer the reference questions.</li>
@@ -45,7 +46,6 @@
             <div class="flex space-x-4">
                 <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded">Generate</button>
                 <button type="button" id="clearBtn" class="px-4 py-2 border rounded">Clear</button>
-                 <button type="button" id="saveBtn" class="px-4 py-2 bg-green-500 text-white rounded">Save</button>           
             </div>
         </form>
 
@@ -156,133 +156,110 @@ const similarityMatrix = {
     }
 };
 
-        // Global state
-        let currentVersion = 'matrice1';
+      // Global state
+let currentVersion = 'matrice1';
 
-        // Function to get similar colors
-        function getSimilarColors(color) {
-            if (!color || !similarityMatrix[color]) return [];
-            return Object.entries(similarityMatrix[color])
-                .filter(([c]) => c !== color)
-                .sort((a, b) => b[1] - a[1])
-                .slice(0, 5)
-                .map(([c]) => c);
+// Function to get similar colors
+function getSimilarColors(color) {
+    if (!color || !similarityMatrix[color]) return [];
+    return Object.entries(similarityMatrix[color])
+        .filter(([c]) => c !== color)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5)
+        .map(([c]) => c);
+}
+
+// Function to get top similar colors
+function getTopSimilarColors(color, count = 3) {
+    if (!color || !similarityMatrix[color]) return [];
+    return Object.entries(similarityMatrix[color])
+        .filter(([c]) => c !== color)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, count)
+        .map(([c, similarity]) => ({ color: c, similarity }));
+}
+
+// Function to highlight similar colors
+function highlightSimilarColors(color) {
+    const similarColors = getSimilarColors(color);
+    const allColorDivs = document.querySelectorAll('#colorGrid > div');
+    allColorDivs.forEach(div => {
+        div.className = div.className.replace(' border-blue-500 border-2', '');
+        if (similarColors.includes(div.dataset.color)) {
+            div.className += ' border-blue-500 border-2';
         }
+    });
 
-        // Function to update UI
-        function updateUI() {
-            const colorGrid = document.getElementById('colorGrid');
-            colorGrid.innerHTML = '';
-            
-            colorData.forEach(({ color, rgb, matrice1, 'english-words': englishWords }) => {
-                const div = document.createElement('div');
-                div.className = 'flex items-center space-x-2 p-4 border rounded';
-                div.dataset.color = color;
-                
-                const colorBox = document.createElement('div');
-                colorBox.className = 'w-8 h-8 rounded cursor-pointer';
-                colorBox.style.backgroundColor = `rgb(${rgb.join(',')})`;
-                if (color === 'white') colorBox.style.border = '1px solid black';
-                
-                colorBox.onclick = () => highlightSimilarColors(color);
-                
-                const input = document.createElement('input');
-                input.type = 'text';
-                input.className = 'flex-1 p-2 border rounded';
-                input.placeholder = currentVersion === 'matrice1' ? matrice1 : englishWords;
-                
-                div.appendChild(colorBox);
-                div.appendChild(input);
-                colorGrid.appendChild(div);
-            });
+    // Update similar colors list
+    const similarColorsList = document.getElementById('similarColorsList');
+    similarColorsList.innerHTML = '';
+    similarColors.forEach(similarColor => {
+        const colorData = colorData.find(c => c.color === similarColor);
+        const div = document.createElement('div');
+        div.className = 'w-8 h-8 rounded';
+        div.style.backgroundColor = `rgb(${colorData.rgb.join(',')})`;
+        if (similarColor === 'white') div.style.border = '1px solid black';
+        similarColorsList.appendChild(div);
+    });
 
-            // Update pathway select
-            const pathwaySelect = document.getElementById('pathway');
-            pathwaySelect.innerHTML = '<option value="">Choose a pathway...</option>';
-            Object.keys(pathways).forEach(pathway => {
-                const option = document.createElement('option');
-                option.value = pathway;
-                option.textContent = pathway;
-                pathwaySelect.appendChild(option);
-            });
-        }
+    document.getElementById('similarColors').classList.remove('hidden');
+}
 
-        // Function to highlight similar colors
-        function highlightSimilarColors(color) {
-            const similarColors = getSimilarColors(color);
-            const allColorDivs = document.querySelectorAll('#colorGrid > div');
-            allColorDivs.forEach(div => {
-                div.className = div.className.replace(' border-blue-500 border-2', '');
-                if (similarColors.includes(div.dataset.color)) {
-                    div.className += ' border-blue-500 border-2';
-                }
-            });
-
-            // Update similar colors list
-            const similarColorsList = document.getElementById('similarColorsList');
-            similarColorsList.innerHTML = '';
-            similarColors.forEach(similarColor => {
-                const colorData = colorData.find(c => c.color === similarColor);
-                const div = document.createElement('div');
-                div.className = 'w-8 h-8 rounded';
-                div.style.backgroundColor = `rgb(${colorData.rgb.join(',')})`;
-                if (similarColor === 'white') div.style.border = '1px solid black';
-                similarColorsList.appendChild(div);
-            });
-
-            document.getElementById('similarColors').classList.remove('hidden');
-        }
-
-      // Event Listeners
-document.addEventListener('DOMContentLoaded', () => {
-    const form = document.getElementById('colorForm');
-
-    // Function to get top similar colors
-    function getTopSimilarColors(color, count = 3) {
-        if (!color || !similarityMatrix[color]) return [];
-        return Object.entries(similarityMatrix[color])
-            .filter(([c]) => c !== color)
-            .sort((a, b) => b[1] - a[1])
-            .slice(0, count)
-            .map(([c, similarity]) => ({ color: c, similarity }));
-    }
-
-    // Function to process input and generate results
-    // Updated function to process input and generate results
-       function processInput(obstacle, pathway, inputs) {
-        const relevantColors = pathways[pathway] || [];
-        let resultText = `Sequencing Result for Pathway "${pathway}" with obstacle "${obstacle}":\n\n`;
+// Function to update UI
+function updateUI() {
+    const colorGrid = document.getElementById('colorGrid');
+    colorGrid.innerHTML = '';
+    
+    colorData.forEach(({ color, rgb, matrice1, 'english-words': englishWords }) => {
+        const div = document.createElement('div');
+        div.className = 'flex items-center space-x-2 p-4 border rounded';
+        div.dataset.color = color;
         
-        relevantColors.forEach(color => {
-            const colorInfo = colorData.find(c => c.color === color);
-            const input = inputs[color] || '[no input]';
+        const colorBox = document.createElement('div');
+        colorBox.className = 'w-8 h-8 rounded cursor-pointer';
+        colorBox.style.backgroundColor = `rgb(${rgb.join(',')})`;
+        if (color === 'white') colorBox.style.border = '1px solid black';
+        
+        colorBox.onclick = () => highlightSimilarColors(color);
+        
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'flex-1 p-2 border rounded';
+        input.placeholder = currentVersion === 'matrice1' ? matrice1 : englishWords;
+        
+        div.appendChild(colorBox);
+        div.appendChild(input);
+        colorGrid.appendChild(div);
+    });
 
-            resultText += `${color.toUpperCase()}:\n`;
-            resultText += `Your interpretation: ${input}\n`;
-            resultText += `Matrice1: ${colorInfo.matrice1}\n`;
-            resultText += `English words: ${colorInfo['english-words']}\n`;
-            resultText += `Top similar colors:\n`;
-            getTopSimilarColors(color).forEach(({ color: similarColor, similarity }) => {
-                resultText += `  - ${similarColor.toUpperCase()}: ${similarity.toFixed(6)}\n`;
-            });
-            resultText += '\n';
-        });
+    // Update pathway select
+    const pathwaySelect = document.getElementById('pathway');
+    pathwaySelect.innerHTML = '<option value="">Choose a pathway...</option>';
+    Object.keys(pathways).forEach(pathway => {
+        const option = document.createElement('option');
+        option.value = pathway;
+        option.textContent = pathway;
+        pathwaySelect.appendChild(option);
+    });
 
-        // Generate pathway-specific statement
-        resultText += generatePathwayStatement(pathway, relevantColors, inputs);
+    // Update button styles
+    document.getElementById('matrice1Btn').className = currentVersion === 'matrice1' 
+        ? 'px-4 py-2 bg-blue-500 text-white rounded mr-2' 
+        : 'px-4 py-2 bg-gray-300 text-gray-700 rounded mr-2';
+    document.getElementById('englishBtn').className = currentVersion === 'english-words' 
+        ? 'px-4 py-2 bg-blue-500 text-white rounded' 
+        : 'px-4 py-2 bg-gray-300 text-gray-700 rounded';
+}
 
-        return resultText;
-    }
+// Function to generate pathway-specific statements
+function generatePathwayStatement(pathway, relevantColors, inputs) {
+    const getColorPhrase = (color) => {
+        const colorInfo = colorData.find(c => c.color === color);
+        const input = inputs[color] || colorInfo[currentVersion];
+        return `${color}-pathway`;
+    };
 
-    // New function to generate pathway-specific statements
-       function generatePathwayStatement(pathway, relevantColors, inputs) {
-        const getColorPhrase = (color) => {
-            const colorInfo = colorData.find(c => c.color === color);
-            const input = inputs[color] || colorInfo.matrice1;
-            return `${color}-pathway`;
-        };
-
-        const statements = {
+    const statements = {
             'knot': () => {
                 // Correct colors for 'knot': white, blue, green, red, black, brown, yellow, purple
                 const [white, blue, green, red, black, brown, yellow, purple] = relevantColors;
@@ -331,32 +308,53 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
 
-        return statements[pathway] ? statements[pathway]() : `let's maybe explore the connection between ${getColorPhrase(relevantColors[0])} and ${getColorPhrase(relevantColors[1])} in this ${pathway}.`;
-    }
+    return statements[pathway] ? statements[pathway]() : `let's maybe explore the connection between ${getColorPhrase(relevantColors[0])} and ${getColorPhrase(relevantColors[1])} in this ${pathway}.`;
+}
+
+// Function to process input and generate results
+function processInput(obstacle, pathway, inputs) {
+    const relevantColors = pathways[pathway] || [];
+    let resultText = `Sequencing Result for Pathway "${pathway}" with obstacle "${obstacle}":\n\n`;
+    
+    relevantColors.forEach(color => {
+        const colorInfo = colorData.find(c => c.color === color);
+        const input = inputs[color] || '[no input]';
+
+        resultText += `${color.toUpperCase()}:\n`;
+        resultText += `Your interpretation: ${input}\n`;
+        resultText += `Matrice1: ${colorInfo.matrice1}\n`;
+        resultText += `English words: ${colorInfo['english-words']}\n`;
+        resultText += `Top similar colors:\n`;
+        getTopSimilarColors(color).forEach(({ color: similarColor, similarity }) => {
+            resultText += `  - ${similarColor.toUpperCase()}: ${similarity.toFixed(6)}\n`;
+        });
+        resultText += '\n';
+    });
+
+    // Generate pathway-specific statement
+    resultText += generatePathwayStatement(pathway, relevantColors, inputs);
+
+    return resultText;
+}
+
+// Event Listeners
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('colorForm');
+    const matrice1Btn = document.getElementById('matrice1Btn');
+    const englishBtn = document.getElementById('englishBtn');
+
+    // Add event listeners for version buttons
+    matrice1Btn.addEventListener('click', () => {
+        currentVersion = 'matrice1';
+        updateUI();
+    });
+
+    englishBtn.addEventListener('click', () => {
+        currentVersion = 'english-words';
+        updateUI();
+    });
+
     // Event listener for form submission
-      // Event Listeners
-    document.addEventListener('DOMContentLoaded', () => {
-        const form = document.getElementById('colorForm');
-        const matrice1Btn = document.getElementById('matrice1Btn');
-        const englishBtn = document.getElementById('englishBtn');
-        const saveBtn = document.getElementById('saveBtn');
-        const clearBtn = document.getElementById('clearBtn');
-
-        // Toggle between Matrice1 and English Words versions
-        matrice1Btn.onclick = () => {
-            currentVersion = 'matrice1';
-            updateUI();
-            matrice1Btn.className = matrice1Btn.className.replace('bg-gray-300 text-gray-700', 'bg-blue-500 text-white');
-            englishBtn.className = englishBtn.className.replace('bg-blue-500 text-white', 'bg-gray-300 text-gray-700');
-        };
-
-        englishBtn.onclick = () => {
-            currentVersion = 'english-words';
-            updateUI();
-            englishBtn.className = englishBtn.className.replace('bg-gray-300 text-gray-700', 'bg-blue-500 text-white');
-            matrice1Btn.className = matrice1Btn.className.replace('bg-blue-500 text-white', 'bg-gray-300 text-gray-700');
-        };
-
     form.onsubmit = (e) => {
         e.preventDefault();
         const obstacle = document.getElementById('obstacle').value;
@@ -366,7 +364,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const inputs = {};
         document.querySelectorAll('#colorGrid > div').forEach(div => {
             const color = div.dataset.color;
-            const input = div.querySelector('input').value;xdrea
+            const input = div.querySelector('input').value;
             inputs[color] = input;
         });
 
@@ -377,49 +375,11 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('resultContent').textContent = resultText;
         document.getElementById('results').classList.remove('hidden');
     };
- // Clear button functionality
-        clearBtn.onclick = () => {
-            document.getElementById('obstacle').value = '';
-            document.getElementById('pathway').value = '';
-            document.querySelectorAll('#colorGrid input').forEach(input => {
-                input.value = '';
-            });
-            document.getElementById('results').classList.add('hidden');
-        };
 
-        // Save button functionality
-        saveBtn.onclick = () => {
-            const obstacle = document.getElementById('obstacle').value;
-            const pathway = document.getElementById('pathway').value;
-            const inputs = {};
-            document.querySelectorAll('#colorGrid > div').forEach(div => {
-                const color = div.dataset.color;
-                const input = div.querySelector('input').value;
-                inputs[color] = input;
-            });
-
-            const saveData = {
-                obstacle,
-                pathway,
-                inputs,
-                version: currentVersion,
-                result: document.getElementById('resultContent').textContent
-            };
-
-            const blob = new Blob([JSON.stringify(saveData, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'rgb_root_matrix_plotter_data.json';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        };
-
-        // Initialize the UI
-        updateUI();
-    });
+    // Initialize the UI
+    updateUI();
+});
   </script>
 </body>
 </html>
+
