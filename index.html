@@ -14,11 +14,11 @@
          <h1 class="my-4">The RGB Root Matriz Color Plotter</h1>
     <p>by Danielle Gauthier</p>
     <p>This program is inspired by the ecofeminist pluriverse and feminist perspectives on family-making and crafting. It is used for telepathic communication and other forms of poetic linguistic navigation programming. To use this deterministic model for sequence optimization:</p>
-  <ol>
+  <ol class="list-decimal list-inside mb-4">
     <li>Enter an obstacle in the first textbox.</li>
     <li>Select the type of "problem" you have by indicating the solution you want to find.</li>
     <li>Answer the reference questions.</li>
-    <li>Hit Expose and you will get results.</li>
+    <li>Hit Generate and you will get results.</li>
   </ol>
         <div class="mb-4">
             <button id="matrice1Btn" class="px-4 py-2 bg-blue-500 text-white rounded mr-2">Matrice1 Version</button>
@@ -46,6 +46,7 @@
             <div class="flex space-x-4">
                 <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded">Generate</button>
                 <button type="button" id="clearBtn" class="px-4 py-2 border rounded">Clear</button>
+              <button type="button" id="saveBtn" class="px-4 py-2 bg-green-500 text-white rounded">Save</button>   
             </div>
         </form>
 
@@ -252,61 +253,63 @@ function updateUI() {
 }
 
 // Function to generate pathway-specific statements
+// Function to generate pathway-specific statements
 function generatePathwayStatement(pathway, relevantColors, inputs) {
     const getColorPhrase = (color) => {
         const colorInfo = colorData.find(c => c.color === color);
-        const input = inputs[color] || colorInfo[currentVersion];
-        return `${color}-pathway`;
+        const input = inputs[color];
+        if (input && input.trim() !== '') {
+            return input.trim();
+        }
+        return currentVersion === 'matrice1' ? colorInfo.matrice1 : colorInfo['english-words'];
     };
 
     const statements = {
-            'knot': () => {
-                // Correct colors for 'knot': white, blue, green, red, black, brown, yellow, purple
-                const [white, blue, green, red, black, brown, yellow, purple] = relevantColors;
-                return `let's maybe clarify the ${getColorPhrase(white)} with ${getColorPhrase(blue)} from ${getColorPhrase(green)}. The ${getColorPhrase(red)} will melt with ${getColorPhrase(black)} from ${getColorPhrase(brown)} due to ${getColorPhrase(yellow)} for ${getColorPhrase(purple)}.`;
-            },
-            'plot': () => {
-                // Correct colors for 'plot': grey, pink, gold, nude, orange
-                const [grey, pink, gold, nude, orange] = relevantColors;
-                return `let's maybe set the ${getColorPhrase(grey)} from the ${getColorPhrase(pink)} and the ${getColorPhrase(gold)} to return a ${getColorPhrase(nude)} and an ${getColorPhrase(orange)}.`;
-            },
-            'pain': () => {
-                const [gold, orange] = relevantColors;
-                return `let's maybe use inspiration from clarity and distribution from ${getColorPhrase(gold)} to address the pain from the ${getColorPhrase(orange)} as from the world of a return.`;
-            },
-            'practical': () => {
-                const [yellow, green] = relevantColors;
-                return `let's maybe use our energy from work to achieve the ${getColorPhrase(yellow)} for the ${getColorPhrase(green)}.`;
-            },
-            'spiritual': () => {
-                const [blue, brown] = relevantColors;
-                return `let's maybe ${getColorPhrase(blue)} with ${getColorPhrase(brown)}.`;
-            },
-            'prayer': () => {
-                const [nude, white] = relevantColors;
-                return `let's maybe ${getColorPhrase(nude)} our ${getColorPhrase(white)}.`;
-            },
-            'sad': () => {
-                const [purple, grey, red] = relevantColors;
-                return `let's maybe use the freedom from ${getColorPhrase(purple)} to ${getColorPhrase(grey)} for ${getColorPhrase(red)} awareness.`;
-            },
-            'precise': () => {
-                const [pink, black] = relevantColors;
-                return `let's maybe give openness from the ${getColorPhrase(pink)} to ${getColorPhrase(black)}.`;
-            },
-            'fem': () => {
-                const [brown, gold, orange, pink] = relevantColors;
-                return `let's maybe use ${getColorPhrase(brown)} to ${getColorPhrase(gold)} the pain of the ${getColorPhrase(orange)} as a new ${getColorPhrase(pink)}.`;
-            },
-            'masc': () => {
-                const [red, blue, orange] = relevantColors;
-                return `let's maybe use awareness from the ${getColorPhrase(red)} to ${getColorPhrase(blue)} to address the pain from the ${getColorPhrase(orange)} as a seed for a return.`;
-            },
-            'direct': () => {
-                const [red, orange] = relevantColors;
-                return `let's maybe use gratitude from a return and inspiration from clarity to limit from ${getColorPhrase(red)} the pain from ${getColorPhrase(orange)}.`;
-            }
-        };
+        'knot': () => {
+            const [white, blue, green, red, black, brown, yellow, purple] = relevantColors;
+            return `let's maybe clarify the ${getColorPhrase(white)} with ${getColorPhrase(blue)} from ${getColorPhrase(green)}. The ${getColorPhrase(red)} will melt with ${getColorPhrase(black)} from ${getColorPhrase(brown)} due to ${getColorPhrase(yellow)} for ${getColorPhrase(purple)}.`;
+        },
+        'plot': () => {
+            const [grey, pink, gold, nude, orange] = relevantColors;
+            return `let's maybe set the ${getColorPhrase(grey)} from the ${getColorPhrase(pink)} and the ${getColorPhrase(gold)} to return a ${getColorPhrase(nude)} and a ${getColorPhrase(orange)}.`;
+        },
+        'pain': () => {
+            const [gold, orange] = relevantColors;
+            return `let's maybe use inspiration from clarity and distribution from ${getColorPhrase(gold)} to address the pain from the ${getColorPhrase(orange)} as from the world of a return.`;
+        },
+        'practical': () => {
+            const [yellow, green] = relevantColors;
+            return `let's maybe use our energy from work to achieve the ${getColorPhrase(yellow)} for the ${getColorPhrase(green)}.`;
+        },
+        'spiritual': () => {
+            const [blue, brown] = relevantColors;
+            return `let's maybe ${getColorPhrase(blue)} with ${getColorPhrase(brown)}.`;
+        },
+        'prayer': () => {
+            const [nude, white] = relevantColors;
+            return `let's maybe ${getColorPhrase(nude)} our ${getColorPhrase(white)}.`;
+        },
+        'sad': () => {
+            const [purple, grey, red] = relevantColors;
+            return `let's maybe use the freedom from ${getColorPhrase(purple)} to ${getColorPhrase(grey)} for ${getColorPhrase(red)} awareness.`;
+        },
+        'precise': () => {
+            const [pink, black] = relevantColors;
+            return `let's maybe give openness from the ${getColorPhrase(pink)} to ${getColorPhrase(black)}.`;
+        },
+        'fem': () => {
+            const [brown, gold, orange, pink] = relevantColors;
+            return `let's maybe use ${getColorPhrase(brown)} to ${getColorPhrase(gold)} the pain of the ${getColorPhrase(orange)} as a new ${getColorPhrase(pink)}.`;
+        },
+        'masc': () => {
+            const [red, blue, orange] = relevantColors;
+            return `let's maybe use awareness from the ${getColorPhrase(red)} to ${getColorPhrase(blue)} to address the pain from the ${getColorPhrase(orange)} as a seed for a return.`;
+        },
+        'direct': () => {
+            const [red, orange] = relevantColors;
+            return `let's maybe use gratitude from a return and inspiration from clarity to limit from ${getColorPhrase(red)} the pain from ${getColorPhrase(orange)}.`;
+        }
+    };
 
     return statements[pathway] ? statements[pathway]() : `let's maybe explore the connection between ${getColorPhrase(relevantColors[0])} and ${getColorPhrase(relevantColors[1])} in this ${pathway}.`;
 }
@@ -336,6 +339,65 @@ function processInput(obstacle, pathway, inputs) {
 
     return resultText;
 }
+      
+      // Print to PDF functionality
+function printToPDF() {
+    const obstacle = document.getElementById('obstacle').value;
+    const pathway = document.getElementById('pathway').value;
+    const inputs = {};
+    document.querySelectorAll('#colorGrid > div').forEach(div => {
+        const color = div.dataset.color;
+        const input = div.querySelector('input').value;
+        inputs[color] = input;
+    });
+    const result = document.getElementById('resultContent').textContent;
+
+    // Create a new window for printing
+    const printWindow = window.open('', '_blank');
+    
+    // Generate HTML content for the print window
+    printWindow.document.write(`
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <title>RGB Root Matrix Color Plotter Results</title>
+            <style>
+                body { font-family: Arial, sans-serif; line-height: 1.6; padding: 20px; }
+                h1 { color: #333; }
+                h2 { color: #666; }
+                .color-input { margin-bottom: 10px; }
+                pre { white-space: pre-wrap; background-color: #f4f4f4; padding: 10px; border-radius: 5px; }
+            </style>
+        </head>
+        <body>
+            <h1>RGB Root Matrix Color Plotter Results</h1>
+            <h2>Settings</h2>
+            <p><strong>Obstacle:</strong> ${obstacle}</p>
+            <p><strong>Pathway:</strong> ${pathway}</p>
+            <p><strong>Version:</strong> ${currentVersion}</p>
+            
+            <h2>Color Inputs</h2>
+            ${Object.entries(inputs).map(([color, value]) => `
+                <div class="color-input">
+                    <strong>${color}:</strong> ${value || '(No input)'}
+                </div>
+            `).join('')}
+            
+            <h2>Result</h2>
+            <pre>${result}</pre>
+        </body>
+        </html>
+    `);
+
+    // Trigger print dialog
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => {
+        printWindow.print();
+        printWindow.close();
+    }, 250);
+}
 
 // Event Listeners
 document.addEventListener('DOMContentLoaded', () => {
@@ -360,6 +422,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const obstacle = document.getElementById('obstacle').value;
         const pathway = document.getElementById('pathway').value;
 
+      
+      
         // Collect inputs for all colors
         const inputs = {};
         document.querySelectorAll('#colorGrid > div').forEach(div => {
@@ -375,7 +439,22 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('resultContent').textContent = resultText;
         document.getElementById('results').classList.remove('hidden');
     };
+//save button
+   const saveBtn = document.getElementById('saveBtn');
+    saveBtn.textContent = 'Print to PDF';
+    saveBtn.onclick = printToPDF;
+ // Clear button functionality
+        clearBtn.onclick = () => {
+            document.getElementById('obstacle').value = '';
+            document.getElementById('pathway').value = '';
+            document.querySelectorAll('#colorGrid input').forEach(input => {
+                input.value = '';
+            });
+            document.getElementById('results').classList.add('hidden');
+        };
+         
 
+  
     // Initialize the UI
     updateUI();
 });
