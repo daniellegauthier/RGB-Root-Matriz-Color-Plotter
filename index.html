@@ -10,7 +10,15 @@
     <div class="max-w-4xl mx-auto bg-white rounded-lg shadow p-6">
         <h1 class="text-2xl font-bold mb-2">The RGB Root Matrix Color Plotter</h1>
         <p class="text-sm mb-4">by Danielle Gauthier</p>
-        
+         <h1 class="my-4">The RGB Root Matriz Color Plotter</h1>
+    <p>by Danielle Gauthier</p>
+    <p>This program is inspired by the ecofeminist pluriverse and feminist perspectives on family-making and crafting. It is used for telepathic communication and other forms of poetic linguistic navigation programming. To use this deterministic model for sequence optimization:</p>
+  <ol>
+    <li>Enter an obstacle in the first textbox.</li>
+    <li>Select the type of "problem" you have by indicating the solution you want to find.</li>
+    <li>Answer the reference questions.</li>
+    <li>Hit Expose and you will get results.</li>
+  </ol>
         <div class="mb-4">
             <button id="matrice1Btn" class="px-4 py-2 bg-blue-500 text-white rounded mr-2">Matrice1 Version</button>
             <button id="englishBtn" class="px-4 py-2 bg-gray-300 text-gray-700 rounded">English Words Version</button>
@@ -64,15 +72,6 @@
             { color: 'purple', rgb: [180,50,255], matrice1: 'Free', 'english-words': 'perfectly great - imaginative, brave, gifted' }
         ];
 
-        // Similarity matrix
-        const similarityMatrix = {
-            grey: {
-                grey: 1.000000, pink: 0.738781, gold: 0.811503, nude: 0.960488, orange: 0.760979,
-                white: 1.000000, blue: 0.577350, green: 0.577350, red: 0.577350, black: 0.000000,
-                brown: 0.710812, yellow: 0.816497, purple: 0.885817
-            },
-            // ... rest of similarity matrix data (omitted for brevity)
-        };
 
         // Pathways
         const pathways = {
@@ -88,6 +87,73 @@
             'masc': ['red', 'blue', 'orange'],
             'direct': ['red', 'orange']
         };
+const similarityMatrix = {
+    grey: {
+       pink: 0.738781, gold: 0.811503, nude: 0.960488, orange: 0.760979, 
+        white: 1.000000, blue: 0.577350, green: 0.577350, red: 0.577350, black: 0.000000,
+        brown: 0.710812, yellow: 0.816497, purple: 0.885817
+    },
+    pink: {
+      grey: 0.738781, gold: 0.734710, nude: 0.834433, orange: 0.861208,
+        white: 0.738781, blue: 0.338719, green: 0.000000, red: 0.940887, black: 0.000000,
+        brown: 0.906562, yellow: 0.665308, purple: 0.809003
+    },
+    gold: {
+        grey: 0.811503, pink: 0.734710, nude: 0.930603, orange: 0.966330,
+        white: 0.811503, blue: 0.000000, green: 0.624695, red: 0.780869, black: 0.000000,
+        brown: 0.919577, yellow: 0.993884, purple: 0.543455
+    },
+    nude: {
+        grey: 0.960488, pink: 0.834433, gold: 0.930603, orange: 0.911424,
+        white: 0.960488, blue: 0.362970, green: 0.544456, red: 0.756188, black: 0.000000,
+        brown: 0.874321, yellow: 0.919694, purple: 0.809512
+    },
+    orange: {
+        grey: 0.760979, pink: 0.861208, gold: 0.966330, nude: 0.911424, 
+        white: 0.760979, blue: 0.000000, green: 0.402739, red: 0.915315, black: 0.000000,
+        brown: 0.989713, yellow: 0.932005, purple: 0.584904
+    },
+    white: {
+        grey: 1.000000, pink: 0.738781, gold: 0.811503, nude: 0.960488, orange: 0.760979,
+         blue: 0.577350, green: 0.577350, red: 0.577350, black: 0.000000,
+        brown: 0.710812, yellow: 0.816497, purple: 0.885817
+    },
+    blue: {
+        grey: 0.577350, pink: 0.338719, gold: 0.000000, nude: 0.362970, orange: 0.000000,
+        white: 0.577350,  green: 0.000000, red: 0.000000, black: 0.000000,
+        brown: 0.000000, yellow: 0.000000, purple: 0.806683
+    },
+    green: {
+        grey: 0.577350, pink: 0.000000, gold: 0.624695, nude: 0.544456, orange: 0.402739,
+        white: 0.577350, blue: 0.000000, red: 0.000000, black: 0.000000,
+        brown: 0.267644, yellow: 0.707107, purple: 0.158173
+    },
+    red: {
+        grey: 0.577350, pink: 0.940887, gold: 0.780869, nude: 0.756188, orange: 0.915315,
+        white: 0.577350, blue: 0.000000, green: 0.000000,  black: 0.000000,
+        brown: 0.963518, yellow: 0.707107, purple: 0.569424
+    },
+    black: {
+        grey: 0.000000, pink: 0.000000, gold: 0.000000, nude: 0.000000, orange: 0.000000,
+        white: 0.000000, blue: 0.000000, green: 0.000000, red: 0.000000, 
+        brown: 0.000000, yellow: 0.000000, purple: 0.000000
+    },
+    brown: {
+        grey: 0.710812, pink: 0.906562, gold: 0.919577, nude: 0.874321, orange: 0.989713,
+        white: 0.710812, blue: 0.000000, green: 0.267644, red: 0.963518, black: 0.000000,
+       yellow: 0.870563, purple: 0.590984
+    },
+    yellow: {
+        grey: 0.816497, pink: 0.665308, gold: 0.993884, nude: 0.919694, orange: 0.932005,
+        white: 0.816497, blue: 0.000000, green: 0.707107, red: 0.707107, black: 0.000000,
+        brown: 0.870563,  purple: 0.514489
+    },
+    purple: {
+        grey: 0.885817, pink: 0.809003, gold: 0.543455, nude: 0.809512, orange: 0.584904,
+        white: 0.885817, blue: 0.806683, green: 0.158173, red: 0.569424, black: 0.000000,
+        brown: 0.590984, yellow: 0.514489
+    }
+};
 
         // Global state
         let currentVersion = 'matrice1';
@@ -170,121 +236,118 @@
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('colorForm');
 
-const similarityMatrix = {
-    grey: {
-        grey: 1.000000, pink: 0.738781, gold: 0.811503, nude: 0.960488, orange: 0.760979, 
-        white: 1.000000, blue: 0.577350, green: 0.577350, red: 0.577350, black: 0.000000,
-        brown: 0.710812, yellow: 0.816497, purple: 0.885817
-    },
-    pink: {
-        grey: 0.738781, pink: 1.000000, gold: 0.734710, nude: 0.834433, orange: 0.861208,
-        white: 0.738781, blue: 0.338719, green: 0.000000, red: 0.940887, black: 0.000000,
-        brown: 0.906562, yellow: 0.665308, purple: 0.809003
-    },
-    gold: {
-        grey: 0.811503, pink: 0.734710, gold: 1.000000, nude: 0.930603, orange: 0.966330,
-        white: 0.811503, blue: 0.000000, green: 0.624695, red: 0.780869, black: 0.000000,
-        brown: 0.919577, yellow: 0.993884, purple: 0.543455
-    },
-    nude: {
-        grey: 0.960488, pink: 0.834433, gold: 0.930603, nude: 1.000000, orange: 0.911424,
-        white: 0.960488, blue: 0.362970, green: 0.544456, red: 0.756188, black: 0.000000,
-        brown: 0.874321, yellow: 0.919694, purple: 0.809512
-    },
-    orange: {
-        grey: 0.760979, pink: 0.861208, gold: 0.966330, nude: 0.911424, orange: 1.000000,
-        white: 0.760979, blue: 0.000000, green: 0.402739, red: 0.915315, black: 0.000000,
-        brown: 0.989713, yellow: 0.932005, purple: 0.584904
-    },
-    white: {
-        grey: 1.000000, pink: 0.738781, gold: 0.811503, nude: 0.960488, orange: 0.760979,
-        white: 1.000000, blue: 0.577350, green: 0.577350, red: 0.577350, black: 0.000000,
-        brown: 0.710812, yellow: 0.816497, purple: 0.885817
-    },
-    blue: {
-        grey: 0.577350, pink: 0.338719, gold: 0.000000, nude: 0.362970, orange: 0.000000,
-        white: 0.577350, blue: 1.000000, green: 0.000000, red: 0.000000, black: 0.000000,
-        brown: 0.000000, yellow: 0.000000, purple: 0.806683
-    },
-    green: {
-        grey: 0.577350, pink: 0.000000, gold: 0.624695, nude: 0.544456, orange: 0.402739,
-        white: 0.577350, blue: 0.000000, green: 1.000000, red: 0.000000, black: 0.000000,
-        brown: 0.267644, yellow: 0.707107, purple: 0.158173
-    },
-    red: {
-        grey: 0.577350, pink: 0.940887, gold: 0.780869, nude: 0.756188, orange: 0.915315,
-        white: 0.577350, blue: 0.000000, green: 0.000000, red: 1.000000, black: 0.000000,
-        brown: 0.963518, yellow: 0.707107, purple: 0.569424
-    },
-    black: {
-        grey: 0.000000, pink: 0.000000, gold: 0.000000, nude: 0.000000, orange: 0.000000,
-        white: 0.000000, blue: 0.000000, green: 0.000000, red: 0.000000, black: 1.000000,
-        brown: 0.000000, yellow: 0.000000, purple: 0.000000
-    },
-    brown: {
-        grey: 0.710812, pink: 0.906562, gold: 0.919577, nude: 0.874321, orange: 0.989713,
-        white: 0.710812, blue: 0.000000, green: 0.267644, red: 0.963518, black: 0.000000,
-        brown: 1.000000, yellow: 0.870563, purple: 0.590984
-    },
-    yellow: {
-        grey: 0.816497, pink: 0.665308, gold: 0.993884, nude: 0.919694, orange: 0.932005,
-        white: 0.816497, blue: 0.000000, green: 0.707107, red: 0.707107, black: 0.000000,
-        brown: 0.870563, yellow: 1.000000, purple: 0.514489
-    },
-    purple: {
-        grey: 0.885817, pink: 0.809003, gold: 0.543455, nude: 0.809512, orange: 0.584904,
-        white: 0.885817, blue: 0.806683, green: 0.158173, red: 0.569424, black: 0.000000,
-        brown: 0.590984, yellow: 0.514489, purple: 1.000000
-    }
-};
-
-    
-       // Function to calculate percentiles for similarity
-    function calculatePercentile(similarityArray, color) {
-        const sortedScores = similarityArray.filter(value => value !== 1.000000).sort((a, b) => a - b); // Exclude self-similarity
-        const colorSimilarity = similarityMatrix[color];
-        const percentile = (sortedScores.indexOf(colorSimilarity) + 1) / sortedScores.length * 100;
-        return percentile.toFixed(2);
+    // Function to get top similar colors
+    function getTopSimilarColors(color, count = 3) {
+        if (!color || !similarityMatrix[color]) return [];
+        return Object.entries(similarityMatrix[color])
+            .filter(([c]) => c !== color)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, count)
+            .map(([c, similarity]) => ({ color: c, similarity }));
     }
 
-    // Function to handle result generation
+    // Function to process input and generate results
+    // Updated function to process input and generate results
+       function processInput(obstacle, pathway, inputs) {
+        const relevantColors = pathways[pathway] || [];
+        let resultText = `Sequencing Result for Pathway "${pathway}" with obstacle "${obstacle}":\n\n`;
+        
+        relevantColors.forEach(color => {
+            const colorInfo = colorData.find(c => c.color === color);
+            const input = inputs[color] || '[no input]';
+
+            resultText += `${color.toUpperCase()}:\n`;
+            resultText += `Your interpretation: ${input}\n`;
+            resultText += `Matrice1: ${colorInfo.matrice1}\n`;
+            resultText += `English words: ${colorInfo['english-words']}\n`;
+            resultText += `Top similar colors:\n`;
+            getTopSimilarColors(color).forEach(({ color: similarColor, similarity }) => {
+                resultText += `  - ${similarColor.toUpperCase()}: ${similarity.toFixed(6)}\n`;
+            });
+            resultText += '\n';
+        });
+
+        // Generate pathway-specific statement
+        resultText += generatePathwayStatement(pathway, relevantColors, inputs);
+
+        return resultText;
+    }
+
+    // New function to generate pathway-specific statements
+       function generatePathwayStatement(pathway, relevantColors, inputs) {
+        const getColorPhrase = (color) => {
+            const colorInfo = colorData.find(c => c.color === color);
+            const input = inputs[color] || colorInfo.matrice1;
+            return `${color}-pathway`;
+        };
+
+        const statements = {
+            'knot': () => {
+                // Correct colors for 'knot': white, blue, green, red, black, brown, yellow, purple
+                const [white, blue, green, red, black, brown, yellow, purple] = relevantColors;
+                return `let's maybe clarify the ${getColorPhrase(white)} with ${getColorPhrase(blue)} from ${getColorPhrase(green)}. The ${getColorPhrase(red)} will melt with ${getColorPhrase(black)} from ${getColorPhrase(brown)} due to ${getColorPhrase(yellow)} for ${getColorPhrase(purple)}.`;
+            },
+            'plot': () => {
+                // Correct colors for 'plot': grey, pink, gold, nude, orange
+                const [grey, pink, gold, nude, orange] = relevantColors;
+                return `let's maybe set the ${getColorPhrase(grey)} from the ${getColorPhrase(pink)} and the ${getColorPhrase(gold)} to return a ${getColorPhrase(nude)} and an ${getColorPhrase(orange)}.`;
+            },
+            'pain': () => {
+                const [gold, orange] = relevantColors;
+                return `let's maybe use inspiration from clarity and distribution from ${getColorPhrase(gold)} to address the pain from the ${getColorPhrase(orange)} as from the world of a return.`;
+            },
+            'practical': () => {
+                const [yellow, green] = relevantColors;
+                return `let's maybe use our energy from work to achieve the ${getColorPhrase(yellow)} for the ${getColorPhrase(green)}.`;
+            },
+            'spiritual': () => {
+                const [blue, brown] = relevantColors;
+                return `let's maybe ${getColorPhrase(blue)} with ${getColorPhrase(brown)}.`;
+            },
+            'prayer': () => {
+                const [nude, white] = relevantColors;
+                return `let's maybe ${getColorPhrase(nude)} our ${getColorPhrase(white)}.`;
+            },
+            'sad': () => {
+                const [purple, grey, red] = relevantColors;
+                return `let's maybe use the freedom from ${getColorPhrase(purple)} to ${getColorPhrase(grey)} for ${getColorPhrase(red)} awareness.`;
+            },
+            'precise': () => {
+                const [pink, black] = relevantColors;
+                return `let's maybe give openness from the ${getColorPhrase(pink)} to ${getColorPhrase(black)}.`;
+            },
+            'fem': () => {
+                const [brown, gold, orange, pink] = relevantColors;
+                return `let's maybe use ${getColorPhrase(brown)} to ${getColorPhrase(gold)} the pain of the ${getColorPhrase(orange)} as a new ${getColorPhrase(pink)}.`;
+            },
+            'masc': () => {
+                const [red, blue, orange] = relevantColors;
+                return `let's maybe use awareness from the ${getColorPhrase(red)} to ${getColorPhrase(blue)} to address the pain from the ${getColorPhrase(orange)} as a seed for a return.`;
+            },
+            'direct': () => {
+                const [red, orange] = relevantColors;
+                return `let's maybe use gratitude from a return and inspiration from clarity to limit from ${getColorPhrase(red)} the pain from ${getColorPhrase(orange)}.`;
+            }
+        };
+
+        return statements[pathway] ? statements[pathway]() : `let's maybe explore the connection between ${getColorPhrase(relevantColors[0])} and ${getColorPhrase(relevantColors[1])} in this ${pathway}.`;
+    }
+    // Event listener for form submission
     form.onsubmit = (e) => {
         e.preventDefault();
         const obstacle = document.getElementById('obstacle').value;
         const pathway = document.getElementById('pathway').value;
-        const useEnglishWords = document.getElementById('useEnglishWords').checked; // Check if user wants English words
 
-        // Select relevant colors for the pathway
-        const relevantColors = pathways[pathway] || [];
-
-        // Generate results based on relevant colors
-        let resultText = `Sequencing Result for Pathway "${pathway}":\n\n`;
-        relevantColors.forEach(color => {
-            const colorInfo = colorData.find(c => c.color === color);
-            const input = document.querySelector(`#colorGrid > div[data-color="${color}"] input`).value || '[no input]';
-
-            // Get the similarity values excluding self-similarity
-            const similarities = Object.values(similarityMatrix[color]).filter(sim => sim !== 1.000000);
-            const highestSimilarity = Math.max(...similarities).toFixed(6); // Get the highest non-self similarity value
-            const percentile = calculatePercentile(similarities, color);
-
-            // Display either english-words or color name based on user preference
-            const displayName = useEnglishWords ? colorInfo['english-words'] : color.toUpperCase();
-
-            resultText += `${displayName}:\n`;
-            resultText += `Your interpretation: ${input}\n`;
-            resultText += `Matrice1: ${colorInfo.matrice1}\n`;
-            resultText += `Similarity score: ${highestSimilarity}. Percentile: ${percentile}% amongst other matches\n\n`;
+        // Collect inputs for all colors
+        const inputs = {};
+        document.querySelectorAll('#colorGrid > div').forEach(div => {
+            const color = div.dataset.color;
+            const input = div.querySelector('input').value;
+            inputs[color] = input;
         });
 
-        // Example of pathway-specific phrase generation using either color or action words
-        const firstColorInfo = colorData.find(c => c.color === relevantColors[0]);
-        const secondColorInfo = colorData.find(c => c.color === relevantColors[1]);
-        const firstWord = useEnglishWords ? firstColorInfo['english-words'] : relevantColors[0].toUpperCase();
-        const secondWord = useEnglishWords ? secondColorInfo['english-words'] : relevantColors[1].toUpperCase();
-
-        const phrase = `let's maybe get a "${firstWord}" from the "${secondWord}"`;
-        resultText += `${phrase}\n`;
+        // Process inputs and generate result
+        const resultText = processInput(obstacle, pathway, inputs);
 
         // Display the result
         document.getElementById('resultContent').textContent = resultText;
@@ -294,6 +357,6 @@ const similarityMatrix = {
     // Initialize the UI
     updateUI();
 });
-    </script>
+  </script>
 </body>
 </html>
