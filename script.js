@@ -130,6 +130,60 @@ document.addEventListener('DOMContentLoaded', () => {
         resultCard.classList.remove('hidden');
     };
 
+    function printToPDF() {
+    const pathway = document.getElementById('pathway').value;
+    const inputs = {};
+    document.querySelectorAll('#colorGrid > div').forEach(div => {
+        const color = div.dataset.color;
+        const input = div.querySelector('input').value;
+        inputs[color] = input;
+    });
+    const result = document.getElementById('resultContent').textContent;
+
+    // Create a new window for printing
+    const printWindow = window.open('', '_blank');
+    
+    // Generate HTML content for the print window
+    printWindow.document.write(`
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <title>RGB Root Matrix Color Plotter Results</title>
+            <style>
+                body { font-family: Arial, sans-serif; line-height: 1.6; padding: 20px; }
+                h1 { color: #333; }
+                h2 { color: #666; }
+                .color-input { margin-bottom: 10px; }
+                pre { white-space: pre-wrap; background-color: #f4f4f4; padding: 10px; border-radius: 5px; }
+            </style>
+        </head>
+        <body>
+            <h1>RGB Root Matrix Color Plotter Results</h1>
+            <h2>Settings</h2>
+            <p><strong>Obstacle:</strong> ${obstacle}</p>
+            <p><strong>Pathway:</strong> ${pathway}</p>
+            <p><strong>Version:</strong> ${currentVersion}</p>
+            
+            <h2>Color Inputs</h2>
+            ${Object.entries(inputs).map(([color, value]) => `
+                <div class="color-input">
+                    <strong>${color}:</strong> ${value || '(No input)'}</div>`).join('')}
+            
+            <h2>Result</h2>
+            <pre>${result}</pre>
+        </body>
+        </html>
+    `);
+
+    // Trigger print dialog
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => {
+        printWindow.print();
+        printWindow.close();
+    }, 250);
+}
     const clearInputs = () => {
         obstacle = '';
         selectedPathway = '';
