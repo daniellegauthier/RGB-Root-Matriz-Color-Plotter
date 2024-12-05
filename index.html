@@ -1,46 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+   <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RGB Root Matrix Color Plotter</title>
-    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
 </head>
-<body>
-    <div class="card w-full max-w-4xl mx-auto">
-        <div class="card-header">
-            <h2 class="card-title">RGB Root Matrix Color Plotter</h2>
+<body class="bg-gray-100 p-4">
+    <div class="max-w-4xl mx-auto bg-white rounded-lg shadow p-6">
+        <h1 class="text-2xl font-bold mb-2">The RGB Root Matrix Color Plotter</h1>
+        <p class="text-sm mb-4">by Danielle Gauthier</p>
+   <p>This program is inspired by the ecofeminist pluriverse and feminist perspectives on family-making and crafting. It is a synesthesia used for telepathic communication and other forms of poetic linguistic navigation programming. The colors have been analyzed according to their navigational properties in RGB computation using Python. To use this deterministic model for sequence optimization:</p>
+  <ol class="list-decimal list-inside mb-4">
+    <li>Enter an obstacle in the first textbox.</li>
+    <li>Select the method of coping by indicating the solution or "pathway" you want to find.</li>
+    <li>Hit Generate to find the relevant colors for the pathway.</li>
+    <li>Answer the relevant reference questions.</li>
+    <li>Hit Generate and you will get results.</li>
+  </ol>
+        <div class="mb-4">
+            <button id="matrice1Btn" class="px-4 py-2 bg-blue-500 text-white rounded mr-2">Matrice1 Version</button>
+            <button id="englishBtn" class="px-4 py-2 bg-gray-300 text-gray-700 rounded">English Words Version</button>
         </div>
-        <div class="card-content">
-            <div class="space-y-6">
-                <div class="flex space-x-2">
-                    <button id="matrice1Button" class="btn">Matrice1 Version</button>
-                    <button id="englishWordsButton" class="btn">English Words Version</button>
-                    <button id="gnhButton" class="btn">GNH Indicators Version</button>
-                </div>
-                <input id="obstacleInput" type="text" placeholder="Enter your obstacle">
-                <select id="pathwaySelect">
-                    <option value="" disabled selected>Choose a pathway...</option>
-                    <!-- Options will be populated by JavaScript -->
+
+        <form id="colorForm" class="space-y-4">
+            <div>
+                <label class="block mb-2">Enter your obstacle:</label>
+                <input type="text" id="obstacle" class="w-full p-2 border rounded" placeholder="e.g., fear, uncertainty...">
+            </div>
+            <div>
+                <label class="block mb-2">Select Pathway:</label>
+                <select id="pathway" class="w-full p-2 border rounded">
+                    <option value="">Choose a pathway...</option>
                 </select>
-                <div id="colorInputsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Color inputs will be populated by JavaScript -->
-                </div>
-                <div class="flex space-x-2">
-                    <button id="generateButton" class="btn">Generate</button>
-                    <button id="clearButton" class="btn btn-outline">Clear</button>
-                </div>
-                <div id="resultCard" class="card hidden">
-                    <div class="card-header">
-                        <h2 class="card-title">Results</h2>
-                    </div>
+            </div>
+            <div id="colorGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Color inputs will be dynamically added here -->
+            </div>
+            <div id="similarColors" class="mt-4 hidden">
+                <h3 class="font-bold mb-2">5 Most Similar Colors:</h3>
+                <div id="similarColorsList" class="flex space-x-2"></div>
+            </div>
+            <div class="flex space-x-4">
+                <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded">Generate</button>
+                <button type="button" id="clearBtn" class="px-4 py-2 border rounded">Clear</button>
+              <button type="button" id="saveBtn" class="px-4 py-2 bg-green-500 text-white rounded">Save</button>   
+            </div>
+        </form>
                     <div class="card-content">
                         <pre id="resultContent" class="whitespace-pre-wrap bg-gray-100 p-4 rounded"></pre>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
+         
     <script src="script.js"></script>
 </body>
 </html>
