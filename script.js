@@ -42,6 +42,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const resultCard = document.getElementById('resultCard');
     const resultContent = document.getElementById('resultContent');
 
+    if (!obstacleInput || !pathwaySelect || !colorInputsContainer || !resultCard || !resultContent) {
+        console.error("One or more elements not found in the DOM.");
+        return;
+    }
+
     const createModel = () => {
         const model = tf.sequential();
         model.add(tf.layers.dense({ units: 13, activation: 'relu', inputShape: [13] }));
