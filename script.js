@@ -230,7 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('matrice1Btn').addEventListener('click', () => handleVersionChange('matrice1'));
     document.getElementById('englishBtn').addEventListener('click', () => handleVersionChange('english-words'));
     document.getElementById('generateButton').addEventListener('click', generateResult);
-    document.getElementById('clearButton').addEventListener('click', clearInputs);
+    document.getElementById('clearBtn').addEventListener('click', clearInputs);
 
     // Initialize
     initModel();
