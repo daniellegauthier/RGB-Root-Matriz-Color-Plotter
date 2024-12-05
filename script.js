@@ -36,381 +36,155 @@ document.addEventListener('DOMContentLoaded', () => {
     let result = '';
     let model = null;
 
-    const obstacle = document.getElementById('obstacle');
-    const pathway = document.getElementById('pathway');
-    const colorForm = document.getElementById('colorForm');
+    const obstacleInput = document.getElementById('obstacleInput');
+    const pathwaySelect = document.getElementById('pathwaySelect');
+    const colorInputsContainer = document.getElementById('colorInputsContainer');
     const resultCard = document.getElementById('resultCard');
     const resultContent = document.getElementById('resultContent');
 
-    const similarityMatrix = {
-    grey: {
-       pink: 0.738781, gold: 0.811503, nude: 0.960488, orange: 0.760979, 
-        white: 1.000000, blue: 0.577350, green: 0.577350, red: 0.577350, black: 0.000000,
-        brown: 0.710812, yellow: 0.816497, purple: 0.885817
-    },
-    pink: {
-      grey: 0.738781, gold: 0.734710, nude: 0.834433, orange: 0.861208,
-        white: 0.738781, blue: 0.338719, green: 0.000000, red: 0.940887, black: 0.000000,
-        brown: 0.906562, yellow: 0.665308, purple: 0.809003
-    },
-    gold: {
-        grey: 0.811503, pink: 0.734710, nude: 0.930603, orange: 0.966330,
-        white: 0.811503, blue: 0.000000, green: 0.624695, red: 0.780869, black: 0.000000,
-        brown: 0.919577, yellow: 0.993884, purple: 0.543455
-    },
-    nude: {
-        grey: 0.960488, pink: 0.834433, gold: 0.930603, orange: 0.911424,
-        white: 0.960488, blue: 0.362970, green: 0.544456, red: 0.756188, black: 0.000000,
-        brown: 0.874321, yellow: 0.919694, purple: 0.809512
-    },
-    orange: {
-        grey: 0.760979, pink: 0.861208, gold: 0.966330, nude: 0.911424, 
-        white: 0.760979, blue: 0.000000, green: 0.402739, red: 0.915315, black: 0.000000,
-        brown: 0.989713, yellow: 0.932005, purple: 0.584904
-    },
-    white: {
-        grey: 1.000000, pink: 0.738781, gold: 0.811503, nude: 0.960488, orange: 0.760979,
-         blue: 0.577350, green: 0.577350, red: 0.577350, black: 0.000000,
-        brown: 0.710812, yellow: 0.816497, purple: 0.885817
-    },
-    blue: {
-        grey: 0.577350, pink: 0.338719, gold: 0.000000, nude: 0.362970, orange: 0.000000,
-        white: 0.577350,  green: 0.000000, red: 0.000000, black: 0.000000,
-        brown: 0.000000, yellow: 0.000000, purple: 0.806683
-    },
-    green: {
-        grey: 0.577350, pink: 0.000000, gold: 0.624695, nude: 0.544456, orange: 0.402739,
-        white: 0.577350, blue: 0.000000, red: 0.000000, black: 0.000000,
-        brown: 0.267644, yellow: 0.707107, purple: 0.158173
-    },
-    red: {
-        grey: 0.577350, pink: 0.940887, gold: 0.780869, nude: 0.756188, orange: 0.915315,
-        white: 0.577350, blue: 0.000000, green: 0.000000,  black: 0.000000,
-        brown: 0.963518, yellow: 0.707107, purple: 0.569424
-    },
-    black: {
-        grey: 0.000000, pink: 0.000000, gold: 0.000000, nude: 0.000000, orange: 0.000000,
-        white: 0.000000, blue: 0.000000, green: 0.000000, red: 0.000000, 
-        brown: 0.000000, yellow: 0.000000, purple: 0.000000
-    },
-    brown: {
-        grey: 0.710812, pink: 0.906562, gold: 0.919577, nude: 0.874321, orange: 0.989713,
-        white: 0.710812, blue: 0.000000, green: 0.267644, red: 0.963518, black: 0.000000,
-       yellow: 0.870563, purple: 0.590984
-    },
-    yellow: {
-        grey: 0.816497, pink: 0.665308, gold: 0.993884, nude: 0.919694, orange: 0.932005,
-        white: 0.816497, blue: 0.000000, green: 0.707107, red: 0.707107, black: 0.000000,
-        brown: 0.870563,  purple: 0.514489
-    },
-    purple: {
-        grey: 0.885817, pink: 0.809003, gold: 0.543455, nude: 0.809512, orange: 0.584904,
-        white: 0.885817, blue: 0.806683, green: 0.158173, red: 0.569424, black: 0.000000,
-        brown: 0.590984, yellow: 0.514489
-    }
-};
+    const createModel = () => {
+        const model = tf.sequential();
+        model.add(tf.layers.dense({ units: 13, activation: 'relu', inputShape: [13] }));
+        model.add(tf.layers.dense({ units: 8, activation: 'relu' }));
+        model.add(tf.layers.dense({ units: 1, activation: 'sigmoid' }));
+        model.compile({ optimizer: 'adam', loss: 'meanSquaredError' });
+        return model;
+    };
 
-      // Global state
-let currentVersion = 'matrice1';
+    const initModel = async () => {
+        const newModel = createModel();
+        model = newModel;
+    };
 
-// Function to get similar colors
-function getSimilarColors(color) {
-    if (!color || !similarityMatrix[color]) return [];
-    return Object.entries(similarityMatrix[color])
-        .filter(([c]) => c !== color)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 5)
-        .map(([c]) => c);
-}
+    const handleVersionChange = (version) => {
+        currentVersion = version;
+        renderColorInputs();
+    };
 
-// Function to get top similar colors
-function getTopSimilarColors(color, count = 3) {
-    if (!color || !similarityMatrix[color]) return [];
-    return Object.entries(similarityMatrix[color])
-        .filter(([c]) => c !== color)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, count)
-        .map(([c, similarity]) => ({ color: c, similarity }));
-}
+    const handleColorInput = (color, value) => {
+        colorInputs[color] = value;
+    };
 
-// Function to highlight similar colors
-function highlightSimilarColors(color) {
-    const similarColors = getSimilarColors(color);
-    const allColorDivs = document.querySelectorAll('#colorGrid > div');
-    allColorDivs.forEach(div => {
-        div.className = div.className.replace(' border-blue-500 border-2', '');
-        if (similarColors.includes(div.dataset.color)) {
-            div.className += ' border-blue-500 border-2';
+    const analyzeGNH = async () => {
+        if (!model) return;
+
+        const inputData = colorData.map(color => parseFloat(colorInputs[color.color]) || 0);
+        const inputTensor = tf.tensor2d([inputData]);
+        const prediction = await model.predict(inputTensor).data();
+        return prediction[0] * 10; // Scale the output to 0-10 range
+    };
+
+    const generateFiscalAnalysis = (gnhScore) => {
+        const baseGDP = 65020.35; // National average GDP
+        const adjustedGDP = baseGDP * (1 + (gnhScore - 5) / 10);
+        const economicGrowth = ((adjustedGDP / baseGDP) - 1) * 100;
+
+        return `
+        Fiscal Analysis based on GNH Score:
+        
+        GNH Score: ${gnhScore.toFixed(2)} / 10
+        Estimated GDP Impact: $${adjustedGDP.toFixed(2)}
+        Projected Economic Growth: ${economicGrowth.toFixed(2)}%
+        
+        Interpretation:
+        ${gnhScore < 4 ? "Low GNH indicates potential economic challenges. Focus on improving all GNH indicators equally to boost overall well-being and economic performance." :
+            gnhScore < 7 ? "Moderate GNH suggests stable conditions. Continue balancing all aspects of GNH for sustainable progress." :
+            "High GNH indicates strong potential for sustainable growth. Maintain current policies while ensuring all GNH indicators remain balanced."}
+        
+        Key Areas for Fiscal Policy:
+        ${colorData.map(({ color, gnh }) => {
+            const value = parseFloat(colorInputs[color]) || 0;
+            return `- ${gnh}: ${value > 5 ? "Maintain current policies" : "Consider improvements"}`
+        }).join('\n        ')}
+        `;
+    };
+
+    const generateResult = async () => {
+        if (!selectedPathway) {
+            result = "Please select a pathway before generating results.";
+            resultContent.textContent = result;
+            resultCard.classList.remove('hidden');
+            return;
         }
-    });
 
-    // Update similar colors list
-    const similarColorsList = document.getElementById('similarColorsList');
-    similarColorsList.innerHTML = '';
-    similarColors.forEach(similarColor => {
-        const colorData = colorData.find(c => c.color === similarColor);
-        const div = document.createElement('div');
-        div.className = 'w-8 h-8 rounded';
-        div.style.backgroundColor = `rgb(${colorData.rgb.join(',')})`;
-        if (similarColor === 'white') div.style.border = '1px solid black';
-        similarColorsList.appendChild(div);
-    });
+        const relevantColors = pathways[selectedPathway] || [];
+        let resultText = `Sequencing Result for Pathway "${selectedPathway}" with obstacle "${obstacle}":\n\n`;
 
-    document.getElementById('similarColors').classList.remove('hidden');
-}
+        relevantColors.forEach(color => {
+            const colorInfo = colorData.find(c => c.color === color);
+            const input = colorInputs[color] || '[no input]';
 
-// Function to update UI
-function updateUI() {
-    const colorGrid = document.getElementById('colorGrid');
-    colorGrid.innerHTML = '';
-    
-    colorData.forEach(({ color, rgb, matrice1, 'english-words': englishWords }) => {
-        const div = document.createElement('div');
-        div.className = 'flex items-center space-x-2 p-4 border rounded';
-        div.dataset.color = color;
-        
-        const colorBox = document.createElement('div');
-        colorBox.className = 'w-8 h-8 rounded cursor-pointer';
-        colorBox.style.backgroundColor = `rgb(${rgb.join(',')})`;
-        if (color === 'white') colorBox.style.border = '1px solid black';
-        
-        colorBox.onclick = () => highlightSimilarColors(color);
-        
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.className = 'flex-1 p-2 border rounded';
-        input.placeholder = currentVersion === 'matrice1' ? matrice1 : englishWords;
-        
-        div.appendChild(colorBox);
-        div.appendChild(input);
-        colorGrid.appendChild(div);
-    });
+            resultText += `${color.toUpperCase()}:\n`;
+            resultText += `Your interpretation: ${input}\n`;
+            resultText += `Matrice1: ${colorInfo.matrice1}\n`;
+            resultText += `English words: ${colorInfo['english-words']}\n`;
+            resultText += `GNH Indicator: ${colorInfo.gnh}\n`;
+            resultText += `GNH Value: ${input}\n\n`;
+        });
 
-    // Update pathway select
-    const pathwaySelect = document.getElementById('pathway');
-    pathwaySelect.innerHTML = '<option value="">Choose a pathway...</option>';
+        const gnhScore = await analyzeGNH();
+        resultText += generateFiscalAnalysis(gnhScore);
+
+        result = resultText;
+        resultContent.textContent = result;
+        resultCard.classList.remove('hidden');
+    };
+
+    const clearInputs = () => {
+        obstacle = '';
+        selectedPathway = '';
+        colorInputs = {};
+        result = '';
+        obstacleInput.value = '';
+        pathwaySelect.value = '';
+        renderColorInputs();
+        resultCard.classList.add('hidden');
+    };
+
+    const renderColorInputs = () => {
+        colorInputsContainer.innerHTML = '';
+        colorData.forEach(({ color, rgb, matrice1, 'english-words': englishWords, gnh }) => {
+            const div = document.createElement('div');
+            div.className = 'flex items-center space-x-2';
+
+            const colorDiv = document.createElement('div');
+            colorDiv.className = 'w-8 h-8 rounded';
+            colorDiv.style.backgroundColor = `rgb(${rgb.join(',')})`;
+            if (color === 'white') colorDiv.style.border = '1px solid black';
+            div.appendChild(colorDiv);
+
+            const input = document.createElement('input');
+            input.type = currentVersion === 'gnh' ? 'number' : 'text';
+            if (currentVersion === 'gnh') {
+                input.min = 0;
+                input.max = 10;
+                input.step = 0.1;
+            }
+            input.placeholder = currentVersion === 'matrice1' ? matrice1 : 
+                                currentVersion === 'english-words' ? englishWords : 
+                                `Enter ${gnh} value (0-10)`;
+            input.value = colorInputs[color] || '';
+            input.addEventListener('input', (e) => handleColorInput(color, e.target.value));
+            div.appendChild(input);
+
+            colorInputsContainer.appendChild(div);
+        });
+    };
+
+    // Event listeners
+    document.getElementById('matrice1Button').addEventListener('click', () => handleVersionChange('matrice1'));
+    document.getElementById('englishWordsButton').addEventListener('click', () => handleVersionChange('english-words'));
+    document.getElementById('gnhButton').addEventListener('click', () => handleVersionChange('gnh'));
+    document.getElementById('generateButton').addEventListener('click', generateResult);
+    document.getElementById('clearButton').addEventListener('click', clearInputs);
+
+    // Initialize
+    initModel();
+    renderColorInputs();
     Object.keys(pathways).forEach(pathway => {
         const option = document.createElement('option');
         option.value = pathway;
         option.textContent = pathway;
         pathwaySelect.appendChild(option);
     });
-
-    // Update button styles
-    document.getElementById('matrice1Btn').className = currentVersion === 'matrice1' 
-        ? 'px-4 py-2 bg-blue-500 text-white rounded mr-2' 
-        : 'px-4 py-2 bg-gray-300 text-gray-700 rounded mr-2';
-    document.getElementById('englishBtn').className = currentVersion === 'english-words' 
-        ? 'px-4 py-2 bg-blue-500 text-white rounded' 
-        : 'px-4 py-2 bg-gray-300 text-gray-700 rounded';
-}
-
-// Function to generate pathway-specific statements
-// Function to generate pathway-specific statements
-function generatePathwayStatement(pathway, relevantColors, inputs) {
-    const getColorPhrase = (color) => {
-        const colorInfo = colorData.find(c => c.color === color);
-        const input = inputs[color];
-        if (input && input.trim() !== '') {
-            return input.trim();
-        }
-        return currentVersion === 'matrice1' ? colorInfo.matrice1 : colorInfo['english-words'];
-    };
-
-    const statements = {
-        'knot': () => {
-            const [white, blue, green, red, black, brown, yellow, purple] = relevantColors;
-            return `let's maybe clarify the ${getColorPhrase(white)} with ${getColorPhrase(blue)} from ${getColorPhrase(green)}. The ${getColorPhrase(red)} will melt with ${getColorPhrase(black)} from ${getColorPhrase(brown)} due to ${getColorPhrase(yellow)} for ${getColorPhrase(purple)}.`;
-        },
-        'plot': () => {
-            const [grey, pink, gold, nude, orange] = relevantColors;
-            return `let's maybe set the ${getColorPhrase(grey)} from the ${getColorPhrase(pink)} and the ${getColorPhrase(gold)} to return a ${getColorPhrase(nude)} and a ${getColorPhrase(orange)}.`;
-        },
-        'pain': () => {
-            const [gold, orange] = relevantColors;
-            return `let's maybe use inspiration from clarity and distribution from ${getColorPhrase(gold)} to address the pain from the ${getColorPhrase(orange)} as from the world of a return.`;
-        },
-        'practical': () => {
-            const [yellow, green] = relevantColors;
-            return `let's maybe use our energy from work to achieve the ${getColorPhrase(yellow)} for the ${getColorPhrase(green)}.`;
-        },
-        'spiritual': () => {
-            const [blue, brown] = relevantColors;
-            return `let's maybe ${getColorPhrase(blue)} with ${getColorPhrase(brown)}.`;
-        },
-        'prayer': () => {
-            const [nude, white] = relevantColors;
-            return `let's maybe ${getColorPhrase(nude)} our ${getColorPhrase(white)}.`;
-        },
-        'sad': () => {
-            const [purple, grey, red] = relevantColors;
-            return `let's maybe use the freedom from ${getColorPhrase(purple)} to ${getColorPhrase(grey)} for ${getColorPhrase(red)} awareness.`;
-        },
-        'precise': () => {
-            const [pink, black] = relevantColors;
-            return `let's maybe give openness from the ${getColorPhrase(pink)} to ${getColorPhrase(black)}.`;
-        },
-        'fem': () => {
-            const [brown, gold, orange, pink] = relevantColors;
-            return `let's maybe use ${getColorPhrase(brown)} to ${getColorPhrase(gold)} the pain of the ${getColorPhrase(orange)} as a new ${getColorPhrase(pink)}.`;
-        },
-        'masc': () => {
-            const [red, blue, orange] = relevantColors;
-            return `let's maybe use awareness from the ${getColorPhrase(red)} to ${getColorPhrase(blue)} to address the pain from the ${getColorPhrase(orange)} as a seed for a return.`;
-        },
-        'direct': () => {
-            const [red, orange] = relevantColors;
-            return `let's maybe use gratitude from a return and inspiration from clarity to limit from ${getColorPhrase(red)} the pain from ${getColorPhrase(orange)}.`;
-        }
-    };
-
-    return statements[pathway] ? statements[pathway]() : `let's maybe explore the connection between ${getColorPhrase(relevantColors[0])} and ${getColorPhrase(relevantColors[1])} in this ${pathway}.`;
-}
-
-// Function to process input and generate results
-function processInput(obstacle, pathway, inputs) {
-    const relevantColors = pathways[pathway] || [];
-    let resultText = `Sequencing Result for Pathway "${pathway}" with obstacle "${obstacle}":\n\n`;
-    
-    relevantColors.forEach(color => {
-        const colorInfo = colorData.find(c => c.color === color);
-        const input = inputs[color] || '[no input]';
-
-        resultText += `${color.toUpperCase()}:\n`;
-        resultText += `Your interpretation: ${input}\n`;
-        resultText += `Matrice1: ${colorInfo.matrice1}\n`;
-        resultText += `English words: ${colorInfo['english-words']}\n`;
-        resultText += `Top similar colors:\n`;
-        getTopSimilarColors(color).forEach(({ color: similarColor, similarity }) => {
-            resultText += `  - ${similarColor.toUpperCase()}: ${similarity.toFixed(6)}\n`;
-        });
-        resultText += '\n';
-    });
-
-    // Generate pathway-specific statement
-    resultText += generatePathwayStatement(pathway, relevantColors, inputs);
-
-    return resultText;
-}
-      
-      // Print to PDF functionality
-function printToPDF() {
-    const obstacle = document.getElementById('obstacle').value;
-    const pathway = document.getElementById('pathway').value;
-    const inputs = {};
-    document.querySelectorAll('#colorGrid > div').forEach(div => {
-        const color = div.dataset.color;
-        const input = div.querySelector('input').value;
-        inputs[color] = input;
-    });
-    const result = document.getElementById('resultContent').textContent;
-
-    // Create a new window for printing
-    const printWindow = window.open('', '_blank');
-    
-    // Generate HTML content for the print window
-    printWindow.document.write(`
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <title>RGB Root Matrix Color Plotter Results</title>
-            <style>
-                body { font-family: Arial, sans-serif; line-height: 1.6; padding: 20px; }
-                h1 { color: #333; }
-                h2 { color: #666; }
-                .color-input { margin-bottom: 10px; }
-                pre { white-space: pre-wrap; background-color: #f4f4f4; padding: 10px; border-radius: 5px; }
-            </style>
-        </head>
-        <body>
-            <h1>RGB Root Matrix Color Plotter Results</h1>
-            <h2>Settings</h2>
-            <p><strong>Obstacle:</strong> ${obstacle}</p>
-            <p><strong>Pathway:</strong> ${pathway}</p>
-            <p><strong>Version:</strong> ${currentVersion}</p>
-            
-            <h2>Color Inputs</h2>
-            ${Object.entries(inputs).map(([color, value]) => `
-                <div class="color-input">
-                    <strong>${color}:</strong> ${value || '(No input)'}
-                </div>
-            `).join('')}
-            
-            <h2>Result</h2>
-            <pre>${result}</pre>
-        </body>
-        </html>
-    `);
-
-    // Trigger print dialog
-    printWindow.document.close();
-    printWindow.focus();
-    setTimeout(() => {
-        printWindow.print();
-        printWindow.close();
-    }, 250);
-}
-
-// Event Listeners
-document.addEventListener('DOMContentLoaded', () => {
-    const form = document.getElementById('colorForm');
-    const matrice1Btn = document.getElementById('matrice1Btn');
-    const englishBtn = document.getElementById('englishBtn');
-
-    // Add event listeners for version buttons
-    matrice1Btn.addEventListener('click', () => {
-        currentVersion = 'matrice1';
-        updateUI();
-    });
-
-    englishBtn.addEventListener('click', () => {
-        currentVersion = 'english-words';
-        updateUI();
-    });
-
-    // Event listener for form submission
-    form.onsubmit = (e) => {
-        e.preventDefault();
-        const obstacle = document.getElementById('obstacle').value;
-        const pathway = document.getElementById('pathway').value;
-
-      
-      
-        // Collect inputs for all colors
-        const inputs = {};
-        document.querySelectorAll('#colorGrid > div').forEach(div => {
-            const color = div.dataset.color;
-            const input = div.querySelector('input').value;
-            inputs[color] = input;
-        });
-
-        // Process inputs and generate result
-        const resultText = processInput(obstacle, pathway, inputs);
-
-        // Display the result
-        document.getElementById('resultContent').textContent = resultText;
-        document.getElementById('results').classList.remove('hidden');
-    };
-//save button
-   const saveBtn = document.getElementById('saveBtn');
-    saveBtn.textContent = 'Print to PDF';
-    saveBtn.onclick = printToPDF;
- // Clear button functionality
-        clearBtn.onclick = () => {
-            document.getElementById('obstacle').value = '';
-            document.getElementById('pathway').value = '';
-            document.querySelectorAll('#colorGrid input').forEach(input => {
-                input.value = '';
-            });
-            document.getElementById('results').classList.add('hidden');
-        };
-         
-
-  
-    // Initialize the UI
-    updateUI();
 });
-
-
-   
