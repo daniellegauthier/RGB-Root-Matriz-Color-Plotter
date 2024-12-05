@@ -36,11 +36,129 @@ document.addEventListener('DOMContentLoaded', () => {
     let result = '';
     let model = null;
 
-    const obstacleInput = document.getElementById('obstacleInput');
-    const pathwaySelect = document.getElementById('pathwaySelect');
-    const colorInputsContainer = document.getElementById('colorInputsContainer');
+    const obstacle = document.getElementById('obstacle');
+    const pathway = document.getElementById('pathway');
+    const colorForm = document.getElementById('colorForm');
     const resultCard = document.getElementById('resultCard');
     const resultContent = document.getElementById('resultContent');
+
+    const similarityMatrix = {
+    grey: {
+       pink: 0.738781, gold: 0.811503, nude: 0.960488, orange: 0.760979, 
+        white: 1.000000, blue: 0.577350, green: 0.577350, red: 0.577350, black: 0.000000,
+        brown: 0.710812, yellow: 0.816497, purple: 0.885817
+    },
+    pink: {
+      grey: 0.738781, gold: 0.734710, nude: 0.834433, orange: 0.861208,
+        white: 0.738781, blue: 0.338719, green: 0.000000, red: 0.940887, black: 0.000000,
+        brown: 0.906562, yellow: 0.665308, purple: 0.809003
+    },
+    gold: {
+        grey: 0.811503, pink: 0.734710, nude: 0.930603, orange: 0.966330,
+        white: 0.811503, blue: 0.000000, green: 0.624695, red: 0.780869, black: 0.000000,
+        brown: 0.919577, yellow: 0.993884, purple: 0.543455
+    },
+    nude: {
+        grey: 0.960488, pink: 0.834433, gold: 0.930603, orange: 0.911424,
+        white: 0.960488, blue: 0.362970, green: 0.544456, red: 0.756188, black: 0.000000,
+        brown: 0.874321, yellow: 0.919694, purple: 0.809512
+    },
+    orange: {
+        grey: 0.760979, pink: 0.861208, gold: 0.966330, nude: 0.911424, 
+        white: 0.760979, blue: 0.000000, green: 0.402739, red: 0.915315, black: 0.000000,
+        brown: 0.989713, yellow: 0.932005, purple: 0.584904
+    },
+    white: {
+        grey: 1.000000, pink: 0.738781, gold: 0.811503, nude: 0.960488, orange: 0.760979,
+         blue: 0.577350, green: 0.577350, red: 0.577350, black: 0.000000,
+        brown: 0.710812, yellow: 0.816497, purple: 0.885817
+    },
+    blue: {
+        grey: 0.577350, pink: 0.338719, gold: 0.000000, nude: 0.362970, orange: 0.000000,
+        white: 0.577350,  green: 0.000000, red: 0.000000, black: 0.000000,
+        brown: 0.000000, yellow: 0.000000, purple: 0.806683
+    },
+    green: {
+        grey: 0.577350, pink: 0.000000, gold: 0.624695, nude: 0.544456, orange: 0.402739,
+        white: 0.577350, blue: 0.000000, red: 0.000000, black: 0.000000,
+        brown: 0.267644, yellow: 0.707107, purple: 0.158173
+    },
+    red: {
+        grey: 0.577350, pink: 0.940887, gold: 0.780869, nude: 0.756188, orange: 0.915315,
+        white: 0.577350, blue: 0.000000, green: 0.000000,  black: 0.000000,
+        brown: 0.963518, yellow: 0.707107, purple: 0.569424
+    },
+    black: {
+        grey: 0.000000, pink: 0.000000, gold: 0.000000, nude: 0.000000, orange: 0.000000,
+        white: 0.000000, blue: 0.000000, green: 0.000000, red: 0.000000, 
+        brown: 0.000000, yellow: 0.000000, purple: 0.000000
+    },
+    brown: {
+        grey: 0.710812, pink: 0.906562, gold: 0.919577, nude: 0.874321, orange: 0.989713,
+        white: 0.710812, blue: 0.000000, green: 0.267644, red: 0.963518, black: 0.000000,
+       yellow: 0.870563, purple: 0.590984
+    },
+    yellow: {
+        grey: 0.816497, pink: 0.665308, gold: 0.993884, nude: 0.919694, orange: 0.932005,
+        white: 0.816497, blue: 0.000000, green: 0.707107, red: 0.707107, black: 0.000000,
+        brown: 0.870563,  purple: 0.514489
+    },
+    purple: {
+        grey: 0.885817, pink: 0.809003, gold: 0.543455, nude: 0.809512, orange: 0.584904,
+        white: 0.885817, blue: 0.806683, green: 0.158173, red: 0.569424, black: 0.000000,
+        brown: 0.590984, yellow: 0.514489
+    }
+};
+
+      // Global state
+let currentVersion = 'matrice1';
+
+// Function to get similar colors
+function getSimilarColors(color) {
+    if (!color || !similarityMatrix[color]) return [];
+    return Object.entries(similarityMatrix[color])
+        .filter(([c]) => c !== color)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5)
+        .map(([c]) => c);
+}
+
+// Function to get top similar colors
+function getTopSimilarColors(color, count = 3) {
+    if (!color || !similarityMatrix[color]) return [];
+    return Object.entries(similarityMatrix[color])
+        .filter(([c]) => c !== color)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, count)
+        .map(([c, similarity]) => ({ color: c, similarity }));
+}
+
+// Function to highlight similar colors
+function highlightSimilarColors(color) {
+    const similarColors = getSimilarColors(color);
+    const allColorDivs = document.querySelectorAll('#colorGrid > div');
+    allColorDivs.forEach(div => {
+        div.className = div.className.replace(' border-blue-500 border-2', '');
+        if (similarColors.includes(div.dataset.color)) {
+            div.className += ' border-blue-500 border-2';
+        }
+    });
+
+    // Update similar colors list
+    const similarColorsList = document.getElementById('similarColorsList');
+    similarColorsList.innerHTML = '';
+    similarColors.forEach(similarColor => {
+        const colorData = colorData.find(c => c.color === similarColor);
+        const div = document.createElement('div');
+        div.className = 'w-8 h-8 rounded';
+        div.style.backgroundColor = `rgb(${colorData.rgb.join(',')})`;
+        if (similarColor === 'white') div.style.border = '1px solid black';
+        similarColorsList.appendChild(div);
+    });
+
+    document.getElementById('similarColors').classList.remove('hidden');
+}
+
 
     const createModel = () => {
         const model = tf.sequential();
