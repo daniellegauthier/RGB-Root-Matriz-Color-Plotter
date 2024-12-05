@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const obstacleInput = document.getElementById('obstacleInput');
     const pathwaySelect = document.getElementById('pathwaySelect');
-    const colorInputsContainer = document.getElementById('colorInputsContainer');
+    const colorInputsContainer = document.getElementById('colorGrid');
     const resultCard = document.getElementById('resultCard');
     const resultContent = document.getElementById('resultContent');
 
