@@ -57,22 +57,21 @@
 
     <script>
         // Color data
-        const colorData = [
-            { color: 'grey', rgb: [170,170,170], matrice1: 'Cover', 'english-words': 'respectful effective apposite precary' },
-            { color: 'pink', rgb: [250,0,90], matrice1: 'Category', 'english-words': 'incredibily exquisite and ambitious' },
-            { color: 'gold', rgb: [250,200,0], matrice1: 'Pull', 'english-words': 'undepartable preflorating technocracy lotiform' },
-            { color: 'nude', rgb: [250,180,120], matrice1: 'Approach', 'english-words': 'felicitously deft satisfied unextenuable' },
-            { color: 'orange', rgb: [250,110,0], matrice1: 'Hit', 'english-words': 'blurry artesian awesome' },
-            { color: 'white', rgb: [255,255,255], matrice1: 'Hope', 'english-words': 'unlavish analeptical' },
-            { color: 'blue', rgb: [0,0,255], matrice1: 'Collect', 'english-words': 'daintily perfect, intelligent photopathy' },
-            { color: 'green', rgb: [0,255,0], matrice1: 'Transition', 'english-words': 'bulbous spontaneous heroic' },
-            { color: 'red', rgb: [255,0,0], matrice1: 'Limit', 'english-words': 'candid apophantic, distinct and radiant' },
-            { color: 'black', rgb: [0,0,0], matrice1: 'Order', 'english-words': 'undertreated paleoatavistic obeyable swabble' },
-            { color: 'brown', rgb: [180,50,0], matrice1: 'Learn', 'english-words': 'abundantly notable and unique submissive' },
-            { color: 'yellow', rgb: [255,255,0], matrice1: 'Structure', 'english-words': 'exhilerating redressible authority plausible' },
-            { color: 'purple', rgb: [180,50,255], matrice1: 'Free', 'english-words': 'perfectly great - imaginative, brave, gifted' }
-        ];
-
+         const colorData = [
+      { color: 'grey', rgb: [170,170,170], matrice1: 'Cover', 'english-words': 'respectful effective apposite precary', gnh: 'Economic Wellness' },
+      { color: 'pink', rgb: [250,0,90], matrice1: 'Category', 'english-words': 'incredibily exquisite and ambitious', gnh: 'Mental Wellness' },
+      { color: 'gold', rgb: [250,200,0], matrice1: 'Pull', 'english-words': 'undepartable preflorating technocracy lotiform', gnh: 'Workplace Wellness' },
+      { color: 'nude', rgb: [250,180,120], matrice1: 'Approach', 'english-words': 'felicitously deft satisfied unextenuable', gnh: 'Physical Wellness' },
+      { color: 'orange', rgb: [250,110,0], matrice1: 'Hit', 'english-words': 'blurry artesian awesome', gnh: 'Social Wellness' },
+      { color: 'white', rgb: [255,255,255], matrice1: 'Hope', 'english-words': 'unlavish analeptical', gnh: 'Political Wellness' },
+      { color: 'blue', rgb: [0,0,255], matrice1: 'Collect', 'english-words': 'daintily perfect, intelligent photopathy', gnh: 'Environmental Wellness' },
+      { color: 'green', rgb: [0,255,0], matrice1: 'Transition', 'english-words': 'bulbous spontaneous heroic', gnh: 'Ecological Diversity' },
+      { color: 'red', rgb: [255,0,0], matrice1: 'Limit', 'english-words': 'candid apophantic, distinct and radiant', gnh: 'Health' },
+      { color: 'black', rgb: [0,0,0], matrice1: 'Order', 'english-words': 'undertreated paleoatavistic obeyable swabble', gnh: 'Good Governance' },
+      { color: 'brown', rgb: [180,50,0], matrice1: 'Learn', 'english-words': 'abundantly notable and unique submissive', gnh: 'Education' },
+      { color: 'yellow', rgb: [255,255,0], matrice1: 'Structure', 'english-words': 'exhilerating redressible authority plausible', gnh: 'Living Standards' },
+      { color: 'purple', rgb: [180,50,255], matrice1: 'Free', 'english-words': 'perfectly great - imaginative, brave, gifted', gnh: 'Cultural Diversity' }
+    ];
 
         // Pathways
         const pathways = {
@@ -338,7 +337,32 @@ function processInput(obstacle, pathway, inputs) {
 
     return resultText;
 }
+      // Generate fiscal analysis
+    function generateFiscalAnalysis(gnhScore) {
+      const baseGDP = 65020.35; // National average GDP
+      const adjustedGDP = baseGDP * (1 + (gnhScore - 5) / 10);
+      const economicGrowth = ((adjustedGDP / baseGDP) - 1) * 100;
       
+      return `
+      Fiscal Analysis based on GNH Score:
+      
+      GNH Score: ${gnhScore.toFixed(2)} / 10
+      Estimated GDP Impact: $${adjustedGDP.toFixed(2)}
+      Projected Economic Growth: ${economicGrowth.toFixed(2)}%
+      
+      Interpretation:
+      ${gnhScore < 4 ? "Low GNH indicates potential economic challenges. Focus on improving all GNH indicators equally to boost overall well-being and economic performance." :
+        gnhScore < 7 ? "Moderate GNH suggests stable conditions. Continue balancing all aspects of GNH for sustainable progress." :
+        "High GNH indicates strong potential for sustainable growth. Maintain current policies while ensuring all GNH indicators remain balanced."}
+      
+      Key Areas for Fiscal Policy:
+      ${colorData.map(({ color, gnh }) => {
+        const value = parseFloat(colorInputs[color]) || 0;
+        return `- ${gnh}: ${value > 5 ? "Maintain current policies" : "Consider improvements"}`
+      }).join('\n      ')}
+      `;
+    }
+
       // Print to PDF functionality
 function printToPDF() {
     const obstacle = document.getElementById('obstacle').value;
@@ -398,66 +422,59 @@ function printToPDF() {
     }, 250);
 }
 
-// Event Listeners
-document.addEventListener('DOMContentLoaded', () => {
-    const form = document.getElementById('colorForm');
-    const matrice1Btn = document.getElementById('matrice1Btn');
-    const englishBtn = document.getElementById('englishBtn');
 
-    // Add event listeners for version buttons
-    matrice1Btn.addEventListener('click', () => {
-        currentVersion = 'matrice1';
-        updateUI();
-    });
-
-    englishBtn.addEventListener('click', () => {
-        currentVersion = 'english-words';
-        updateUI();
-    });
-
-    // Event listener for form submission
-    form.onsubmit = (e) => {
-        e.preventDefault();
-        const obstacle = document.getElementById('obstacle').value;
-        const pathway = document.getElementById('pathway').value;
-
-      
-      
-        // Collect inputs for all colors
-        const inputs = {};
-        document.querySelectorAll('#colorGrid > div').forEach(div => {
-            const color = div.dataset.color;
-            const input = div.querySelector('input').value;
-            inputs[color] = input;
-        });
-
-        // Process inputs and generate result
-        const resultText = processInput(obstacle, pathway, inputs);
-
-        // Display the result
-        document.getElementById('resultContent').textContent = resultText;
-        document.getElementById('results').classList.remove('hidden');
-    };
-//save button
-   const saveBtn = document.getElementById('saveBtn');
-    saveBtn.textContent = 'Print to PDF';
-    saveBtn.onclick = printToPDF;
- // Clear button functionality
-        clearBtn.onclick = () => {
-            document.getElementById('obstacle').value = '';
-            document.getElementById('pathway').value = '';
-            document.querySelectorAll('#colorGrid input').forEach(input => {
-                input.value = '';
             });
-            document.getElementById('results').classList.add('hidden');
-        };
-         
 
-  
-    // Initialize the UI
-    updateUI();
-});
-  </script>
+            // Event listener for pathway selection
+            pathwaySelect.addEventListener('change', (e) => {
+                const selectedPathway = e.target.value;
+                updateColorInputs(selectedPathway);
+            });
+
+            // Event listener for form submission
+            form.onsubmit = async (e) => {
+                e.preventDefault();
+                const obstacle = document.getElementById('obstacle').value;
+                const pathway = document.getElementById('pathway').value;
+
+                if (!pathway) {
+                    alert('Please select a pathway before generating results.');
+                    return;
+                }
+                
+                // Collect inputs for all colors
+                const inputs = {};
+                document.querySelectorAll('#colorGrid > div').forEach(div => {
+                    const color = div.dataset.color;
+                    const input = div.querySelector('input').value;
+                    inputs[color] = input;
+                });
+
+                // Process inputs and generate result
+                const resultText = await processInput(obstacle, pathway, inputs);
+
+                // Display the result
+                document.getElementById('resultContent').textContent = resultText;
+                document.getElementById('results').classList.remove('hidden');
+            };
+
+            // Save button functionality
+            saveBtn.textContent = 'Print to PDF';
+            saveBtn.onclick = printToPDF;
+            
+            // Clear button functionality
+            clearBtn.onclick = () => {
+                document.getElementById('obstacle').value = '';
+                document.getElementById('pathway').value = '';
+                document.getElementById('colorGrid').innerHTML = '';
+                document.getElementById('results').classList.add('hidden');
+                document.getElementById('similarColors').classList.add('hidden');
+                colorInputs = {};
+            };
+
+            // Initialize the UI
+            updateUI();
+        });
+    </script>
 </body>
 </html>
-
