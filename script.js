@@ -57,6 +57,10 @@ let highlightedColor = null;
 let scene, camera, renderer, controls;
 let animationFrameId;
 
+// Import Three.js library
+import * as THREE from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+
 // DOM elements
 document.addEventListener('DOMContentLoaded', () => {
   // Initialize color inputs
@@ -166,7 +170,7 @@ function initVisualization() {
   container.appendChild(renderer.domElement);
   
   // Set up controls
-  controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls = new OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
   
   // Add lights
@@ -419,7 +423,7 @@ function handlePrintToPDF() {
     <html lang="en">
     <head>
       <meta charset="UTF-8">
-      <title>RGB Root Matriz Color Plotter Results</title>
+      <title>RGB Root Matrix Color Plotter Results</title>
       <style>
         body { font-family: Arial, sans-serif; line-height: 1.6; padding: 20px; }
         h1 { color: #333; }
@@ -429,7 +433,7 @@ function handlePrintToPDF() {
       </style>
     </head>
     <body>
-      <h1>RGB Root Matriz Color Plotter Results</h1>
+      <h1>RGB Root Matrix Color Plotter Results</h1>
       <h2>Settings</h2>
       <p><strong>Obstacle:</strong> ${obstacle}</p>
       <p><strong>Pathway:</strong> ${selectedPathway}</p>
