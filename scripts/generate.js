@@ -20,23 +20,23 @@ document.addEventListener('DOMContentLoaded', async () => {
   };
 
   const gnhIndicators = {
-    grey: 'Economic Wellness',
-    pink: 'Mental Wellness',
-    gold: 'Workplace Wellness',
-    nude: 'Physical Wellness',
-    orange: 'Social Wellness',
-    white: 'Political Wellness',
-    blue: 'Environmental Wellness',
-    green: 'Ecological Diversity',
-    red: 'Health',
-    black: 'Good Governance',
-    brown: 'Education Value',
-    yellow: 'Living Standards',
-    purple: 'Cultural Diversity',
+    grey: { label: 'Economic Wellness', description: 'Measures financial security, employment, debt levels, etc.' },
+    pink: { label: 'Mental Wellness', description: 'Relates to emotional health, psychological resilience, and happiness.' },
+    gold: { label: 'Workplace Wellness', description: 'Evaluates work-life balance, safety, and job satisfaction.' },
+    nude: { label: 'Physical Wellness', description: 'Reflects physical health conditions and healthy living.' },
+    orange: { label: 'Social Wellness', description: 'Assesses community engagement, relationships, and social support.' },
+    white: { label: 'Political Wellness', description: 'Civic freedom, government trust, and social justice.' },
+    blue: { label: 'Environmental Wellness', description: 'Ecological health, conservation, clean air and water.' },
+    green: { label: 'Ecological Diversity', description: 'Protection of biodiversity, forests, ecosystems.' },
+    red: { label: 'Health', description: 'Overall medical wellbeing, life expectancy, access to healthcare.' },
+    black: { label: 'Good Governance', description: 'Transparency, leadership effectiveness, public trust.' },
+    brown: { label: 'Education Value', description: 'Literacy, educational access, lifelong learning support.' },
+    yellow: { label: 'Living Standards', description: 'Access to food, shelter, income, material wellbeing.' },
+    purple: { label: 'Cultural Diversity', description: 'Preservation of languages, traditions, cultural expressions.' },
   };
 
   document.getElementById('colorForm').addEventListener('submit', function (e) {
-    e.preventDefault(); // stop page reload
+    e.preventDefault(); // 🚫 stop page reload
 
     const obstacle = document.getElementById('obstacle').value.trim();
     const pathway = document.getElementById('pathway').value.trim();
@@ -74,14 +74,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     resultText += `🌟 Pathway Statement:\n${pathwayStatement}\n\n`;
     resultText += `✨ Color Interpretations:\n\n`;
 
-    const selectedColors = [];
     colorInputs.forEach(input => {
       const color = input.getAttribute('data-color');
       const meaning = input.value || '[no input]';
-      selectedColors.push(color);
 
       const similars = (similarityMatrix[color] || []).map(c => capitalizeFirstLetter(c)).join(', ') || 'No similar colors';
-      const gnh = gnhIndicators[color] || 'Unknown GNH';
+      const gnh = gnhIndicators[color]?.label || 'Unknown GNH';
+      const description = gnhIndicators[color]?.description || '';
 
       let colorSentiment = 'Neutral';
       if (meaning.match(/hope|joy|trust|growth|healing/gi)) {
@@ -96,22 +95,13 @@ document.addEventListener('DOMContentLoaded', async () => {
       resultText += `- GNH Sentiment: ${colorSentiment}\n\n`;
     });
 
-    // GNH Indicator Health Only for Used Colors
-    resultText += `---\n✨ GNH Indicator Health Analysis:\n`;
-    selectedColors.forEach(color => {
-      const gnh = gnhIndicators[color];
-      if (gnh) {
-        resultText += `- ${gnh}: Related\n`;
-      }
-    });
-
     // Output results
     document.getElementById('results').classList.remove('hidden');
     document.getElementById('resultContent').innerText = resultText;
   });
 });
 
-// Load CSV file
+// Load the CSV
 function loadMatriceCSV() {
   return fetch('la matrice plus.csv')
     .then(res => res.text())
@@ -128,12 +118,12 @@ function loadMatriceCSV() {
     });
 }
 
-// Correctly replace {color} placeholders inside text
+// Correct color word replacement
 function replaceColorWordsInPathway(originalText, userInputs) {
   let modified = originalText;
 
   Object.keys(userInputs).forEach(color => {
-    const regex = new RegExp(`{${color}}`, 'gi'); // Match {color} placeholders
+    const regex = new RegExp(`{${color}}`, 'gi'); // exact {color} placeholders
     modified = modified.replace(regex, userInputs[color]);
   });
 
