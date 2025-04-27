@@ -108,6 +108,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('results').classList.remove('hidden');
     document.getElementById('resultContent').innerText = resultText;
+    // Fill hidden pdfContent
+const pdfContent = document.getElementById('pdfContent');
+pdfContent.innerHTML = `
+  <div style="text-align:center;">
+    <img src="${document.getElementById('pathwayImage').src}" style="max-width: 300px; margin-bottom: 20px;" />
+  </div>
+  <pre style="font-family:inherit; white-space:pre-wrap;">${resultText}</pre>
+`;
+pdfContent.classList.remove('hidden');
+
     document.getElementById('downloadPDF').classList.remove('hidden');
   });
 });
