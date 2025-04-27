@@ -33,19 +33,19 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const gnhIndicators = {
-    grey: { label: 'Economic Wellness', description: 'Measures financial security, employment, debt levels, etc.' },
-    pink: { label: 'Mental Wellness', description: 'Relates to emotional health, psychological resilience, and happiness.' },
-    gold: { label: 'Workplace Wellness', description: 'Evaluates work-life balance, safety, and job satisfaction.' },
-    nude: { label: 'Physical Wellness', description: 'Reflects physical health conditions and healthy living.' },
-    orange: { label: 'Social Wellness', description: 'Assesses community engagement, relationships, and social support.' },
-    white: { label: 'Political Wellness', description: 'Civic freedom, government trust, and social justice.' },
-    blue: { label: 'Environmental Wellness', description: 'Ecological health, conservation, clean air and water.' },
-    green: { label: 'Ecological Diversity', description: 'Protection of biodiversity, forests, ecosystems.' },
-    red: { label: 'Health', description: 'Overall medical wellbeing, life expectancy, access to healthcare.' },
-    black: { label: 'Good Governance', description: 'Transparency, leadership effectiveness, public trust.' },
-    brown: { label: 'Education Value', description: 'Literacy, educational access, lifelong learning support.' },
-    yellow: { label: 'Living Standards', description: 'Access to food, shelter, income, material wellbeing.' },
-    purple: { label: 'Cultural Diversity', description: 'Preservation of languages, traditions, cultural expressions.' },
+    grey: { label: 'Economic Wellness' },
+    pink: { label: 'Mental Wellness' },
+    gold: { label: 'Workplace Wellness' },
+    nude: { label: 'Physical Wellness' },
+    orange: { label: 'Social Wellness' },
+    white: { label: 'Political Wellness' },
+    blue: { label: 'Environmental Wellness' },
+    green: { label: 'Ecological Diversity' },
+    red: { label: 'Health' },
+    black: { label: 'Good Governance' },
+    brown: { label: 'Education Value' },
+    yellow: { label: 'Living Standards' },
+    purple: { label: 'Cultural Diversity' }
   };
 
   document.getElementById('colorForm').addEventListener('submit', function (e) {
@@ -55,17 +55,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const pathway = document.getElementById('pathway').value.trim();
     const sentiment = document.getElementById('sentimentScore').innerText || 'Sentiment Score: [not analyzed]';
     const sentimentScore = parseInt(sentiment.match(/\d+/)) || 5;
-    const colorInputs = document.querySelectorAll('#colorGrid input');
 
-    if (!pathway || colorInputs.length === 0) {
-      alert('Please select a pathway and fill your interpretations.');
+    if (!pathway) {
+      alert('Please select a pathway.');
       return;
     }
 
+    // Build userInterpretations, using fallback if input is empty
     const userInterpretations = {};
-    colorInputs.forEach(input => {
+    document.querySelectorAll('#colorGrid input').forEach(input => {
       const color = input.getAttribute('data-color');
-      userInterpretations[color] = input.value || `[no input for ${color}]`;
+      const meaning = input.value.trim();
+      userInterpretations[color] = meaning || fallbackWords[color] || `[no input for ${color}]`;
     });
 
     // Fetch original pathway statement
@@ -86,14 +87,11 @@ document.addEventListener('DOMContentLoaded', () => {
     resultText += `🌟 Pathway Statement:\n${pathwayStatement}\n\n`;
     resultText += `✨ Color Interpretations:\n\n`;
 
-    colorInputs.forEach(input => {
+    document.querySelectorAll('#colorGrid input').forEach(input => {
       const color = input.getAttribute('data-color');
-      const meaning = input.value.trim();
-userInterpretations[color] = meaning || fallbackWords[color] || `[no input for ${color}]`;
-
+      const meaning = userInterpretations[color];
       const similars = (similarityMatrix[color] || []).map(c => capitalizeFirstLetter(c)).join(', ') || 'No similar colors';
       const gnh = gnhIndicators[color]?.label || 'Unknown GNH';
-      const description = gnhIndicators[color]?.description || '';
 
       let colorSentiment = 'Neutral';
       if (meaning.match(/hope|joy|trust|growth|healing/gi)) {
@@ -110,15 +108,16 @@ userInterpretations[color] = meaning || fallbackWords[color] || `[no input for $
 
     document.getElementById('results').classList.remove('hidden');
     document.getElementById('resultContent').innerText = resultText;
+    document.getElementById('downloadPDF').classList.remove('hidden');
   });
 });
 
-// Correctly replace full "color-pathway" words with user inputs
+// Correctly replace full "color-pathway" words with user meanings
 function replacePathwayColorsWithInputs(text, userInputs) {
   let modified = text;
 
   Object.keys(userInputs).forEach(color => {
-    const regex = new RegExp(`${color}-pathway`, 'gi'); // match e.g. pink-pathway exactly
+    const regex = new RegExp(`${color}-pathway`, 'gi');
     modified = modified.replace(regex, userInputs[color]);
   });
 
