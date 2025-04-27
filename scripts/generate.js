@@ -1,7 +1,20 @@
 // scripts/generate.js
 
-document.addEventListener('DOMContentLoaded', async () => {
-  const matriceData = await loadMatriceCSV();
+document.addEventListener('DOMContentLoaded', () => {
+
+  const pathwayStatements = {
+    knot: "let's maybe clarify the white-pathway with blue-pathway from green-pathway. The red-pathway will melt with black-pathway from brown-pathway due to yellow-pathway for purple-pathway.",
+    plot: "let's maybe set the grey-pathway from the pink-pathway and the gold-pathway to return a nude-pathway and an orange-pathway.",
+    pain: "let's maybe use inspiration from clarity and distribution from gold-pathway to address the pain from the orange-pathway as from the world of a return.",
+    practical: "let's maybe use our energy from work to achieve the yellow-pathway for the green-pathway.",
+    spiritual: "let's maybe blue-pathway with brown-pathway.",
+    prayer: "let's maybe nude-pathway our white-pathway.",
+    sad: "let's maybe use the freedom from purple-pathway to grey-pathway for red-pathway awareness.",
+    precise: "let's maybe give openness from the pink-pathway to black-pathway.",
+    feminine: "let's maybe use brown-pathway to gold-pathway the pain of the orange-pathway as a new pink-pathway.",
+    masc: "let's maybe use awareness from the red-pathway to blue-pathway to address the pain from the orange-pathway as a seed for a return.",
+    direct: "let's maybe use gratitude from a return and inspiration from clarity to limit from red-pathway the pain from orange-pathway."
+  };
 
   const similarityMatrix = {
     grey: ['nude', 'white', 'gold'],
@@ -36,12 +49,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   };
 
   document.getElementById('colorForm').addEventListener('submit', function (e) {
-    e.preventDefault(); // 🚫 stop page reload
+    e.preventDefault(); // prevent page reload
 
     const obstacle = document.getElementById('obstacle').value.trim();
     const pathway = document.getElementById('pathway').value.trim();
     const sentiment = document.getElementById('sentimentScore').innerText || 'Sentiment Score: [not analyzed]';
-    const sentimentScore = parseInt(sentiment.match(/\d+/)) || 5; // fallback neutral
+    const sentimentScore = parseInt(sentiment.match(/\d+/)) || 5;
     const colorInputs = document.querySelectorAll('#colorGrid input');
 
     if (!pathway || colorInputs.length === 0) {
@@ -49,7 +62,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
 
-    // Build user input map
     const userInterpretations = {};
     colorInputs.forEach(input => {
       const color = input.getAttribute('data-color');
@@ -57,8 +69,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     // Fetch pathway statement
-    let pathwayOriginal = matriceData[pathway] || "Navigate challenges with strength and grace.";
-    let pathwayStatement = replaceColorWordsInPathway(pathwayOriginal, userInterpretations);
+    let pathwayOriginal = pathwayStatements[pathway] || "Pathway statement not available.";
+    let pathwayStatement = replacePathwayColorsWithInputs(pathwayOriginal, userInterpretations);
 
     // Tone Adjustment
     if (sentimentScore <= 3) {
@@ -77,7 +89,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     colorInputs.forEach(input => {
       const color = input.getAttribute('data-color');
       const meaning = input.value || '[no input]';
-
       const similars = (similarityMatrix[color] || []).map(c => capitalizeFirstLetter(c)).join(', ') || 'No similar colors';
       const gnh = gnhIndicators[color]?.label || 'Unknown GNH';
       const description = gnhIndicators[color]?.description || '';
@@ -95,35 +106,17 @@ document.addEventListener('DOMContentLoaded', async () => {
       resultText += `- GNH Sentiment: ${colorSentiment}\n\n`;
     });
 
-    // Output results
     document.getElementById('results').classList.remove('hidden');
     document.getElementById('resultContent').innerText = resultText;
   });
 });
 
-// Load the CSV
-function loadMatriceCSV() {
-  return fetch('la matrice plus.csv')
-    .then(res => res.text())
-    .then(csv => {
-      const lines = csv.trim().split('\n');
-      const data = {};
-      lines.forEach(line => {
-        const [pathway, statement] = line.split(',');
-        if (pathway && statement) {
-          data[pathway.trim().toLowerCase()] = statement.trim();
-        }
-      });
-      return data;
-    });
-}
-
-// Correct color word replacement
-function replaceColorWordsInPathway(originalText, userInputs) {
-  let modified = originalText;
+// Replace -pathway colors with user input meanings
+function replacePathwayColorsWithInputs(text, userInputs) {
+  let modified = text;
 
   Object.keys(userInputs).forEach(color => {
-    const regex = new RegExp(`{${color}}`, 'gi'); // exact {color} placeholders
+    const regex = new RegExp(`${color}-pathway`, 'gi');
     modified = modified.replace(regex, userInputs[color]);
   });
 
