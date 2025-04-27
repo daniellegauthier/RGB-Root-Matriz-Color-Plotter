@@ -1,10 +1,8 @@
 // scripts/generate.js
 
 document.addEventListener('DOMContentLoaded', async () => {
-  // 1. Load the CSV file (La Matrice Plus)
   const matriceData = await loadMatriceCSV();
-  
-  // 2. Color Similarity Matrix (hardcoded here or from sketch.js)
+
   const similarityMatrix = {
     grey: ['nude', 'white', 'gold'],
     pink: ['purple', 'red', 'brown'],
@@ -21,7 +19,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     purple: ['pink', 'blue', 'red'],
   };
 
-  // GNH Sentiment Words
   const gnhIndicators = {
     grey: 'Economic Wellness',
     pink: 'Mental Wellness',
@@ -44,40 +41,40 @@ document.addEventListener('DOMContentLoaded', async () => {
     const obstacle = document.getElementById('obstacle').value.trim();
     const pathway = document.getElementById('pathway').value.trim();
     const sentiment = document.getElementById('sentimentScore').innerText || 'Sentiment Score: [not analyzed]';
-    const sentimentScore = parseInt(sentiment.match(/\d+/)) || 5; // fallback 5 neutral
+    const sentimentScore = parseInt(sentiment.match(/\d+/)) || 5; // fallback neutral
     const colorInputs = document.querySelectorAll('#colorGrid input');
 
     if (!pathway || colorInputs.length === 0) {
-      alert('Please select a pathway and enter your interpretations.');
+      alert('Please select a pathway and fill your interpretations.');
       return;
     }
 
-    // Build the modified pathway statement
-    let pathwayOriginal = matriceData[pathway] || "Navigate challenges with strength and grace.";
+    // Build user input map
     const userInterpretations = {};
     colorInputs.forEach(input => {
       const color = input.getAttribute('data-color');
       userInterpretations[color] = input.value || `[no input for ${color}]`;
     });
 
+    // Fetch pathway statement and replace
+    let pathwayOriginal = matriceData[pathway] || "Navigate challenges with strength and grace.";
     let pathwayStatement = replaceColorWordsInPathway(pathwayOriginal, userInterpretations);
 
-    // Adjust tone based on sentiment
+    // Tone Adjustment
     if (sentimentScore <= 3) {
       pathwayStatement = "Despite difficulties, " + pathwayStatement;
     } else if (sentimentScore >= 8) {
-      pathwayStatement = "With hope and strength, " + pathwayStatement;
-    } // Otherwise neutral
+      pathwayStatement = "With hope and resilience, " + pathwayStatement;
+    }
 
     let resultText = `🌿 Obstacle: ${obstacle || '[none entered]'}\n`;
     resultText += `🌿 Selected Pathway: ${capitalizeFirstLetter(pathway)}\n`;
     resultText += `🌿 ${sentiment}\n\n`;
 
     resultText += `🌟 Pathway Statement:\n${pathwayStatement}\n\n`;
-
     resultText += `✨ Color Interpretations:\n\n`;
 
-    // For each color, build the block
+    // Per color details
     colorInputs.forEach(input => {
       const color = input.getAttribute('data-color');
       const meaning = input.value || '[no input]';
@@ -108,14 +105,13 @@ document.addEventListener('DOMContentLoaded', async () => {
       resultText += `- ${gnh}: ${status}\n`;
     });
 
-    // Show results
+    // Output Results
     document.getElementById('results').classList.remove('hidden');
     document.getElementById('resultContent').innerText = resultText;
   });
 });
 
-// Helpers:
-
+// Load the CSV
 function loadMatriceCSV() {
   return fetch('la matrice plus.csv')
     .then(res => res.text())
@@ -132,13 +128,16 @@ function loadMatriceCSV() {
     });
 }
 
+// Properly replace color names inside the text
 function replaceColorWordsInPathway(originalText, userInputs) {
-  let text = originalText;
+  let modified = originalText;
+
   Object.keys(userInputs).forEach(color => {
-    const regex = new RegExp(color, 'gi');
-    text = text.replace(regex, userInputs[color]);
+    const regex = new RegExp(`\\b${color}\\b`, 'gi'); // match whole word
+    modified = modified.replace(regex, userInputs[color]);
   });
-  return text;
+
+  return modified;
 }
 
 function capitalizeFirstLetter(string) {
