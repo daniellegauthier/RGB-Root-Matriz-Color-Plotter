@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   document.getElementById('colorForm').addEventListener('submit', function (e) {
-    e.preventDefault(); // prevent page reload
+    e.preventDefault(); // prevent reload
 
     const obstacle = document.getElementById('obstacle').value.trim();
     const pathway = document.getElementById('pathway').value.trim();
@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
       userInterpretations[color] = input.value || `[no input for ${color}]`;
     });
 
-    // Fetch pathway statement
+    // Fetch original pathway statement
     let pathwayOriginal = pathwayStatements[pathway] || "Pathway statement not available.";
     let pathwayStatement = replacePathwayColorsWithInputs(pathwayOriginal, userInterpretations);
 
@@ -111,12 +111,12 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-// Replace -pathway colors with user input meanings
+// Correctly replace full "color-pathway" words with user inputs
 function replacePathwayColorsWithInputs(text, userInputs) {
   let modified = text;
 
   Object.keys(userInputs).forEach(color => {
-    const regex = new RegExp(`${color}-pathway`, 'gi');
+    const regex = new RegExp(`${color}-pathway`, 'gi'); // match e.g. pink-pathway exactly
     modified = modified.replace(regex, userInputs[color]);
   });
 
