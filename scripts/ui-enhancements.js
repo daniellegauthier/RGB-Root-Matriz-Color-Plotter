@@ -28,7 +28,26 @@ const pathwayImages = {
   direct: "direct_red_orange.png"
 };
 
+// Fallback modes
+const wordModes = {
+  matrice1: {
+    red: "vitality", orange: "creativity", yellow: "foundation", green: "nature", blue: "dreaming", purple: "connection",
+    brown: "belonging", pink: "intuition", black: "focus", white: "breath", grey: "memory", nude: "body", gold: "opportunity"
+  },
+  english: {
+    red: "energy", orange: "sociability", yellow: "resourcefulness", green: "balance", blue: "reflection", purple: "identity",
+    brown: "education", pink: "compassion", black: "organization", white: "hope", grey: "persistence", nude: "health", gold: "work"
+  },
+  gnh: {
+    red: "Health", orange: "Social Wellness", yellow: "Living Standards", green: "Ecological Diversity",
+    blue: "Environmental Wellness", purple: "Cultural Diversity", brown: "Education Value",
+    pink: "Mental Wellness", black: "Good Governance", white: "Political Wellness",
+    grey: "Economic Wellness", nude: "Physical Wellness", gold: "Workplace Wellness"
+  }
+};
+
 let currentMode = 'gnh'; // default
+let fallbackWords = {}; // active fallback suggestions
 
 document.addEventListener('DOMContentLoaded', function () {
   populatePathwaysDropdown();
@@ -52,7 +71,7 @@ function attachModeButtons() {
     rerenderColorWords();
   });
   document.getElementById('englishBtn').addEventListener('click', () => {
-    currentMode = 'english-words';
+    currentMode = 'english';
     rerenderColorWords();
   });
   document.getElementById('gnhBtn').addEventListener('click', () => {
@@ -76,12 +95,16 @@ function rerenderColorWords() {
   if (!selectedPathway) return;
 
   const selectedColors = pathways[selectedPathway];
+  fallbackWords = {};
 
   selectedColors.forEach(colorName => {
+    const fallback = wordModes[currentMode][colorName] || `[${colorName}]`;
+    fallbackWords[colorName] = fallback;
+
     const wrapper = document.createElement('div');
     wrapper.innerHTML = `
       <label class="block mb-1 font-bold">${colorName.toUpperCase()}</label>
-      <input type="text" data-color="${colorName}" placeholder="Enter meaning..." class="w-full p-2 border rounded" />
+      <input type="text" data-color="${colorName}" placeholder="${fallback}" class="w-full p-2 border rounded placeholder-gray-400" />
     `;
     colorGrid.appendChild(wrapper);
   });
