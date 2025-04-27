@@ -4,10 +4,10 @@ document.addEventListener('DOMContentLoaded', function () {
   const downloadBtn = document.getElementById('downloadPDF');
 
   downloadBtn.addEventListener('click', function () {
-    const resultContent = document.getElementById('resultContent');
+    const pdfContent = document.getElementById('pdfContent');
     
-    if (!resultContent || resultContent.innerText.trim() === '') {
-      alert('Please generate a result before saving!');
+    if (!pdfContent || pdfContent.innerHTML.trim() === '') {
+      alert('Please generate a result first!');
       return;
     }
 
@@ -19,6 +19,6 @@ document.addEventListener('DOMContentLoaded', function () {
       jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
     };
 
-    html2pdf().from(resultContent).set(options).save();
+    html2pdf().from(pdfContent).set(options).save();
   });
 });
