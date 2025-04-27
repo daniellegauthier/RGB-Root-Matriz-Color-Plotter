@@ -1,45 +1,41 @@
 // scripts/ui-enhancements.js
 
-// PATHWAYS mapping
 const pathways = {
+  knot: ['white', 'blue', 'green', 'red', 'black', 'brown', 'yellow', 'purple'],
+  plot: ['grey', 'pink', 'gold', 'nude', 'orange'],
   pain: ['gold', 'orange'],
   practical: ['yellow', 'green'],
   spiritual: ['blue', 'brown'],
   prayer: ['nude', 'white'],
   sad: ['purple', 'grey', 'red'],
   precise: ['pink', 'black'],
-  fem: ['brown', 'gold', 'orange', 'pink'],
+  feminine: ['brown', 'gold', 'orange', 'pink'],
   masc: ['red', 'blue', 'orange'],
-  direct: ['red', 'orange'],
+  direct: ['red', 'orange']
 };
 
-// GNH INDICATOR definitions
-const gnhIndicators = {
-  grey: { label: 'Economic Wellness', description: 'Measures financial security, employment, debt levels, etc.' },
-  pink: { label: 'Mental Wellness', description: 'Relates to emotional health, psychological resilience, and happiness.' },
-  gold: { label: 'Workplace Wellness', description: 'Evaluates work-life balance, safety, and job satisfaction.' },
-  nude: { label: 'Physical Wellness', description: 'Reflects physical health conditions and healthy living.' },
-  orange: { label: 'Social Wellness', description: 'Assesses community engagement, relationships, and social support.' },
-  white: { label: 'Political Wellness', description: 'Civic freedom, government trust, and social justice.' },
-  blue: { label: 'Environmental Wellness', description: 'Ecological health, conservation, clean air and water.' },
-  green: { label: 'Ecological Diversity', description: 'Protection of biodiversity, forests, ecosystems.' },
-  red: { label: 'Health', description: 'Overall medical wellbeing, life expectancy, access to healthcare.' },
-  black: { label: 'Good Governance', description: 'Transparency, leadership effectiveness, public trust.' },
-  brown: { label: 'Education Value', description: 'Literacy, educational access, lifelong learning support.' },
-  yellow: { label: 'Living Standards', description: 'Access to food, shelter, income, material wellbeing.' },
-  purple: { label: 'Cultural Diversity', description: 'Preservation of languages, traditions, cultural expressions.' },
+const pathwayImages = {
+  knot: "knot_white_blue_green_red_black_brown_yellow_purple.png",
+  plot: "plot_grey_pink_gold_nude_orange.png",
+  pain: "pain_gold_orange.png",
+  practical: "practical_yellow_green.png",
+  prayer: "prayer_nude_white.png",
+  sad: "sad_purple_grey_red.png",
+  spiritual: "spiritual_blue_brown.png",
+  precise: "precise_pink_black.png",
+  feminine: "fem_brown_gold_orange_pink.png",
+  masc: "masc_red_blue_orange.png",
+  direct: "direct_red_orange.png"
 };
 
-// Global mode variable
-let currentMode = 'gnh';
+let currentMode = 'gnh'; // default
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   populatePathwaysDropdown();
   attachModeButtons();
   attachPathwaySelector();
 });
 
-// Populate dropdown
 function populatePathwaysDropdown() {
   const pathwaySelect = document.getElementById('pathway');
   Object.keys(pathways).forEach(path => {
@@ -50,7 +46,6 @@ function populatePathwaysDropdown() {
   });
 }
 
-// Mode switchers
 function attachModeButtons() {
   document.getElementById('matrice1Btn').addEventListener('click', () => {
     currentMode = 'matrice1';
@@ -66,14 +61,13 @@ function attachModeButtons() {
   });
 }
 
-// Pathway selector
 function attachPathwaySelector() {
   document.getElementById('pathway').addEventListener('change', () => {
     rerenderColorWords();
+    updatePathwayImage();
   });
 }
 
-// Render Color Inputs
 function rerenderColorWords() {
   const selectedPathway = document.getElementById('pathway').value;
   const colorGrid = document.getElementById('colorGrid');
@@ -84,18 +78,24 @@ function rerenderColorWords() {
   const selectedColors = pathways[selectedPathway];
 
   selectedColors.forEach(colorName => {
-    const colorInfo = gnhIndicators[colorName];
-
     const wrapper = document.createElement('div');
     wrapper.innerHTML = `
-      <label class="block mb-1 font-bold">
-        ${colorName.toUpperCase()} (${colorInfo?.label || 'Unknown'})
-        <span class="text-gray-400 text-xs" title="${colorInfo?.description || ''}">
-          ⓘ
-        </span>
-      </label>
-      <input type="text" data-color="${colorName}" placeholder="Interpret here..." class="w-full p-2 border rounded" />
+      <label class="block mb-1 font-bold">${colorName.toUpperCase()}</label>
+      <input type="text" data-color="${colorName}" placeholder="Enter meaning..." class="w-full p-2 border rounded" />
     `;
     colorGrid.appendChild(wrapper);
   });
+}
+
+function updatePathwayImage() {
+  const selectedPathway = document.getElementById('pathway').value;
+  const pathwayImage = document.getElementById('pathwayImage');
+
+  if (selectedPathway && pathwayImages[selectedPathway]) {
+    pathwayImage.src = `images/${pathwayImages[selectedPathway]}`;
+    pathwayImage.classList.remove('hidden');
+  } else {
+    pathwayImage.src = '';
+    pathwayImage.classList.add('hidden');
+  }
 }
