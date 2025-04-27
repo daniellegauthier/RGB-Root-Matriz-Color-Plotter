@@ -1,81 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RGB Root Matrix Color Plotter</title>
-  <link rel="stylesheet" href="styles.css">
-  <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RGB Root Matrix Color Plotter</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
-  <div class="container">
-    <h1 class="title">The RGB Root Matrix Color Plotter</h1>
-    <p class="author">by Danielle Gauthier</p>
-    <p class="description">This program is inspired by the ecofeminist pluriverse and feminist perspectives on family-making and crafting. It is a synesthesia used for telepathic communication and other forms of poetic linguistic navigation programming. The colors have been analyzed according to their navigational properties in RGB computation using Python.</p>
+<body class="bg-amber-50 p-4">
 
-    <ol class="instructions">
-      <li>Enter an obstacle in the first textbox.</li>
-      <li>Select the method of coping by indicating the solution or "pathway" you want to find.</li>
-      <li>Hit Generate to find the relevant colors for the pathway.</li>
-      <li>Answer the relevant reference questions.</li>
-      <li>Hit Generate and you will get results.</li>
-    </ol>
+    <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-6">
+        <img src="la matriz consulting logo.png" alt="La Matriz Consulting Logo" class="h-16 mb-6">
 
-    <div class="version-buttons">
-      <button id="matrice1-btn" class="btn btn-active">Matrice1 Version</button>
-      <button id="english-words-btn" class="btn">English Words Version</button>
+        <h1 class="text-3xl font-bold text-brown-700 mb-2">The RGB Root Matrix Color Plotter</h1>
+        <p class="text-sm mb-6 text-brown-500">by Danielle Gauthier</p>
+
+        <p class="mb-4">Inspired by the ecofeminist pluriverse and poetic navigation programming. Navigate challenges by color pathways aligned with wellbeing indicators.</p>
+
+        <form id="colorForm" class="space-y-4">
+            <div>
+                <label class="block mb-2">Enter your obstacle:</label>
+                <input type="text" id="obstacle" class="w-full p-2 border rounded" placeholder="e.g., fear, uncertainty...">
+                <button type="button" id="analyzeBtn" class="bg-brown-600 text-white px-4 py-2 rounded mt-2">Analyze Sentiment</button>
+                <p id="sentimentScore" class="mt-2 text-brown-500"></p>
+            </div>
+
+            <div>
+                <label class="block mb-2">Select Pathway:</label>
+                <select id="pathway" class="w-full p-2 border rounded">
+                    <option value="">Choose a pathway...</option>
+                    <!-- Options populated dynamically -->
+                </select>
+            </div>
+
+            <div id="colorGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Color inputs here -->
+            </div>
+
+            <div class="flex space-x-4">
+                <button type="submit" class="px-4 py-2 bg-brown-700 text-white rounded">Generate</button>
+                <button type="button" id="clearBtn" class="px-4 py-2 border rounded">Clear</button>
+                <button type="button" id="saveBtn" class="px-4 py-2 bg-green-700 text-white rounded">Save as PDF</button>
+            </div>
+        </form>
+
+        <div id="results" class="mt-6 hidden">
+            <h2 class="font-bold mb-2">Results</h2>
+            <pre id="resultContent" class="whitespace-pre-wrap bg-amber-100 p-4 rounded"></pre>
+        </div>
     </div>
 
-    <form id="plotter-form" class="form">
-      <div class="form-group">
-        <label>Enter your obstacle:</label>
-        <input type="text" id="obstacle-input" placeholder="e.g., fear, uncertainty...">
-      </div>
-      
-      <div class="form-group">
-        <label>Select Pathway:</label>
-        <select id="pathway-select">
-          <option value="">Choose a pathway...</option>
-          <option value="plot">plot</option>
-          <option value="knot">knot</option>
-          <option value="pain">pain</option>
-          <option value="practical">practical</option>
-          <option value="spiritual">spiritual</option>
-          <option value="prayer">prayer</option>
-          <option value="sad">sad</option>
-          <option value="precise">precise</option>
-          <option value="fem">fem</option>
-          <option value="masc">masc</option>
-          <option value="direct">direct</option>
-        </select>
-      </div>
-
-      <div id="visualization-container" class="visualization-container hidden">
-        <h3>3D Visualization</h3>
-        <div id="canvas-container"></div>
-      </div>
-
-      <div id="color-inputs" class="color-grid"></div>
-
-      <div id="similar-colors" class="similar-colors hidden">
-        <h3>5 Most Similar Colors:</h3>
-        <div id="similar-colors-display" class="color-display"></div>
-      </div>
-
-      <div class="button-group">
-        <button type="submit" class="btn btn-primary">Generate</button>
-        <button type="button" id="clear-btn" class="btn">Clear</button>
-        <button type="button" id="print-btn" class="btn">Print to PDF</button>
-      </div>
-    </form>
-
-    <div id="results-card" class="card hidden">
-      <h3>Results</h3>
-      <pre id="results-content"></pre>
-    </div>
-  </div>
-
-  <script src="script.js"></script>
+    <script src="jquery.min.js"></script>
+    <script src="jspdf.umd.min.js"></script> <!-- Will add this library too -->
+    <script src="scripts/sentiment.js"></script>
+    <script src="scripts/export.js"></script>
+    <script src="scripts/ui-enhancements.js"></script>
+    <script src="colorPlotter.js"></script>
 </body>
 </html>
