@@ -1,7 +1,8 @@
 // colorPlotter.js
-const { useState } = React;
 
-// Basic UI components since we don't have access to shadcn/ui
+const { useState, useEffect } = React;
+
+// Reusable Components
 const Card = ({ children, className = '' }) => (
   <div className={`border rounded-lg shadow ${className}`}>{children}</div>
 );
@@ -20,7 +21,7 @@ const Button = ({ children, type = 'button', variant = 'primary', onClick }) => 
     onClick={onClick}
     className={`px-4 py-2 rounded ${
       variant === 'primary' 
-        ? 'bg-blue-500 text-white' 
+        ? 'bg-brown-600 text-white' 
         : 'border border-gray-300'
     }`}
   >
@@ -28,12 +29,13 @@ const Button = ({ children, type = 'button', variant = 'primary', onClick }) => 
   </button>
 );
 
-const Input = ({ value, onChange, placeholder }) => (
+const Input = ({ value, onChange, placeholder, dataColor }) => (
   <input
     type="text"
     value={value}
     onChange={onChange}
     placeholder={placeholder}
+    data-color={dataColor}
     className="w-full px-3 py-2 border rounded"
   />
 );
@@ -44,7 +46,7 @@ const Select = ({ value, onChange, options }) => (
     onChange={onChange}
     className="w-full px-3 py-2 border rounded"
   >
-    <option value="">Choose a pathway (optional)</option>
+    <option value="">Choose a pathway...</option>
     {options.map(option => (
       <option key={option} value={option}>
         {option.charAt(0).toUpperCase() + option.slice(1)}
@@ -53,17 +55,21 @@ const Select = ({ value, onChange, options }) => (
   </select>
 );
 
+// Color + GNH Data
 const colorData = [
-  { color: 'grey', rgb: [170,170,170], direction: 'respectful effective apposite precary' },
-  { color: 'pink', rgb: [250,0,90], direction: 'incredibily exquisite and ambitious' },
-  { color: 'gold', rgb: [250,200,0], direction: 'undepartable preflorating technocracy lotiform' },
-  { color: 'nude', rgb: [250,180,120], direction: 'felicitously deft satisfied unextenuable' },
-  { color: 'orange', rgb: [250,110,0], direction: 'blurry artesian awesome' },
-  { color: 'white', rgb: [255,255,255], direction: 'unlavish analeptical' },
-  { color: 'blue', rgb: [0,0,255], direction: 'daintily perfect, intelligent photopathy' },
-  { color: 'green', rgb: [0,255,0], direction: 'bulbous spontaneous heroic' },
-  { color: 'red', rgb: [255,0,0], direction: 'candid apophantic, distinct and radiant' },
-  { color: 'black', rgb: [0,0,0], direction: 'undertreated paleoatavistic obeyable swabble' },
+  { color: 'grey', rgb: [170,170,170], gnh: 'Economic Wellness' },
+  { color: 'pink', rgb: [250,0,90], gnh: 'Mental Wellness' },
+  { color: 'gold', rgb: [250,200,0], gnh: 'Workplace Wellness' },
+  { color: 'nude', rgb: [250,180,120], gnh: 'Physical Wellness' },
+  { color: 'orange', rgb: [250,110,0], gnh: 'Social Wellness' },
+  { color: 'white', rgb: [255,255,255], gnh: 'Political Wellness' },
+  { color: 'blue', rgb: [0,0,255], gnh: 'Environmental Wellness' },
+  { color: 'green', rgb: [0,255,0], gnh: 'Ecological Diversity' },
+  { color: 'red', rgb: [255,0,0], gnh: 'Health' },
+  { color: 'black', rgb: [0,0,0], gnh: 'Good Governance' },
+  { color: 'brown', rgb: [180,50,0], gnh: 'Education Value' },
+  { color: 'yellow', rgb: [255,255,0], gnh: 'Living Standards' },
+  { color: 'purple', rgb: [180,50,255], gnh: 'Cultural Diversity' }
 ];
 
 const pathways = {
@@ -75,7 +81,7 @@ const pathways = {
   precise: ['pink', 'black'],
   fem: ['brown', 'gold', 'orange', 'pink'],
   masc: ['red', 'blue', 'orange'],
-  direct': ['red', 'orange'],
+  direct: ['red', 'orange'],
 };
 
 function ColorPlotter() {
@@ -90,102 +96,84 @@ function ColorPlotter() {
     resultText += `Pathway: ${pathway || '[no pathway selected]'}\n\n`;
     resultText += 'Color Interpretations:\n\n';
 
-    colorData.forEach(({ color, direction }) => {
-      const userInput = colorInputs[color] || direction;
-      resultText += `${color.toUpperCase()}:\n`;
-      resultText += `Your interpretation: ${userInput}\n`;
-      resultText += `Original direction: ${direction}\n\n`;
+    (pathway && pathways[pathway] ? pathways[pathway] : colorData.map(cd => cd.color)).forEach(colorName => {
+      const colorInfo = colorData.find(c => c.color === colorName);
+      const userInput = colorInputs[colorName] || '';
+      resultText += `${colorInfo.color.toUpperCase()}:\n`;
+      resultText += `GNH Indicator: ${colorInfo.gnh}\n`;
+      resultText += `Your interpretation: ${userInput || '[no input]'}\n\n`;
     });
 
-    if (pathway && pathways[pathway]) {
-      resultText += `\nSelected pathway colors: ${pathways[pathway].join(', ')}`;
-    }
-
     setResults(resultText);
+
+    document.getElementById('results').classList.remove('hidden');
+    document.getElementById('resultContent').innerText = resultText;
+  };
+
+  const handleColorInputChange = (color) => (e) => {
+    setColorInputs({ ...colorInputs, [color]: e.target.value });
+  };
+
+  const renderColorInputs = () => {
+    const filteredColors = pathway && pathways[pathway]
+      ? pathways[pathway]
+      : colorData.map(c => c.color);
+
+    return filteredColors.map(colorName => {
+      const colorInfo = colorData.find(c => c.color === colorName);
+
+      return (
+        <div key={colorName}>
+          <label className="block mb-1" title={`GNH: ${colorInfo.gnh}`}>
+            {colorName.charAt(0).toUpperCase() + colorName.slice(1)} ({colorInfo.gnh})
+          </label>
+          <Input
+            value={colorInputs[colorName] || ''}
+            onChange={handleColorInputChange(colorName)}
+            placeholder={`Describe ${colorName} meaning`}
+            dataColor={colorName}
+          />
+        </div>
+      );
+    });
   };
 
   return (
     <div className="max-w-4xl mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-2">The RGB Root Matrix Color Plotter</h1>
-      <p className="text-sm mb-4">by Danielle Gauthier</p>
-
       <Card className="mb-4">
-        <CardHeader>Description</CardHeader>
+        <CardHeader>Color Plotter</CardHeader>
         <CardContent>
-          <p>This program is inspired by ecofeminist pluriverse and feminist perspectives on family-making and crafting. It is used for telepathic communication and poetic linguistic navigation programming.</p>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="block mb-2">Enter your obstacle:</label>
+              <Input value={obstacle} onChange={(e) => setObstacle(e.target.value)} placeholder="Obstacle..." />
+            </div>
+
+            <div>
+              <label className="block mb-2">Select Pathway:</label>
+              <Select 
+                value={pathway} 
+                onChange={(e) => setPathway(e.target.value)} 
+                options={Object.keys(pathways)} 
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {renderColorInputs()}
+            </div>
+
+            <Button type="submit">Generate</Button>
+          </form>
         </CardContent>
       </Card>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block mb-2">Enter your obstacle (optional):</label>
-          <Input
-            value={obstacle}
-            onChange={(e) => setObstacle(e.target.value)}
-            placeholder="e.g., fear, uncertainty, conflict..."
-          />
-        </div>
-
-        <div>
-          <label className="block mb-2">Select Pathway:</label>
-          <Select
-            value={pathway}
-            onChange={(e) => setPathway(e.target.value)}
-            options={Object.keys(pathways)}
-          />
-        </div>
-
-        <div className="space-y-4">
-          {colorData.map(({ color, direction }) => (
-            <div key={color} className="flex items-center space-x-4">
-              <div 
-                className="w-8 h-8 rounded" 
-                style={{
-                  backgroundColor: `rgb(${colorData.find(c => c.color === color).rgb.join(',')})`,
-                  border: color === 'white' ? '1px solid black' : 'none'
-                }}
-              />
-              <div className="flex-grow">
-                <label className="block mb-1">
-                  {color.charAt(0).toUpperCase() + color.slice(1)}:
-                </label>
-                <Input
-                  value={colorInputs[color] || ''}
-                  onChange={(e) => setColorInputs({...colorInputs, [color]: e.target.value})}
-                  placeholder={direction}
-                />
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="space-x-4">
-          <Button type="submit">Expose</Button>
-          <Button 
-            variant="secondary"
-            onClick={() => {
-              setObstacle('');
-              setPathway('');
-              setColorInputs({});
-              setResults('');
-            }}
-          >
-            Clear
-          </Button>
-        </div>
-      </form>
-
-      {results && (
-        <Card className="mt-4">
-          <CardHeader>Results</CardHeader>
-          <CardContent>
-            <pre className="whitespace-pre-wrap">{results}</pre>
-          </CardContent>
-        </Card>
-      )}
+      <div id="results" className="hidden">
+        <h2 className="font-bold mb-2">Results</h2>
+        <pre id="resultContent" className="whitespace-pre-wrap bg-amber-100 p-4 rounded"></pre>
+      </div>
     </div>
   );
 }
 
-// Render the app
-ReactDOM.render(<ColorPlotter />, document.getElementById('root'));
+// Render the React app
+ReactDOM.render(<ColorPlotter />, document.getElementById('colorForm'));
