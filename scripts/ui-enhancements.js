@@ -28,26 +28,41 @@ const pathwayImages = {
   direct: "direct_red_orange.png"
 };
 
-// Fallback modes
-const wordModes = {
-  matrice1: {
-    red: "vitality", orange: "creativity", yellow: "foundation", green: "nature", blue: "dreaming", purple: "connection",
-    brown: "belonging", pink: "intuition", black: "focus", white: "breath", grey: "memory", nude: "body", gold: "opportunity"
-  },
-  english: {
-    red: "energy", orange: "sociability", yellow: "resourcefulness", green: "balance", blue: "reflection", purple: "identity",
-    brown: "education", pink: "compassion", black: "organization", white: "hope", grey: "persistence", nude: "health", gold: "work"
-  },
-  gnh: {
-    red: "Health", orange: "Social Wellness", yellow: "Living Standards", green: "Ecological Diversity",
-    blue: "Environmental Wellness", purple: "Cultural Diversity", brown: "Education Value",
-    pink: "Mental Wellness", black: "Good Governance", white: "Political Wellness",
-    grey: "Economic Wellness", nude: "Physical Wellness", gold: "Workplace Wellness"
-  }
+// Real Matrice Words extracted from CSV
+const matriceWords = {
+  grey: { matrice1: "Cover", matrice: "lose", english: "respectful effective apposite precary" },
+  pink: { matrice1: "Category", matrice: "place", english: "incredibly exquisite and ambitious" },
+  gold: { matrice1: "Pull", matrice: "hide", english: "undepartable preflorating technocracy lotiform" },
+  nude: { matrice1: "Approach", matrice: "jump", english: "felicitously deft satisfied unextenuable" },
+  orange: { matrice1: "Hit", matrice: "drop", english: "blurry artesian awesome" },
+  white: { matrice1: "Hope", matrice: "block", english: "unlavish analeptical" },
+  blue: { matrice1: "Collect", matrice: "glean", english: "daintily perfect, intelligent photopathy" },
+  green: { matrice1: "Transition", matrice: "grow", english: "bulbous spontaneous heroic" },
+  red: { matrice1: "Limit", matrice: "cry", english: "candid apophantic, distinct and radiant" },
+  black: { matrice1: "Order", matrice: "scale", english: "undertreated paleoatavistic obeyable swabble" },
+  brown: { matrice1: "Learn", matrice: "shrink", english: "abundantly notable and unique submissive" },
+  yellow: { matrice1: "Structure", matrice: "array", english: "exhilerating redressible authority plausible" },
+  purple: { matrice1: "Free", matrice: "cheer", english: "perfectly great - imaginative, brave, gifted" }
 };
 
-let currentMode = 'gnh'; // default
-let fallbackWords = {}; // active fallback suggestions
+const gnhIndicators = {
+  red: "Health",
+  orange: "Social Wellness",
+  yellow: "Living Standards",
+  green: "Ecological Diversity",
+  blue: "Environmental Wellness",
+  purple: "Cultural Diversity",
+  brown: "Education Value",
+  pink: "Mental Wellness",
+  black: "Good Governance",
+  white: "Political Wellness",
+  grey: "Economic Wellness",
+  nude: "Physical Wellness",
+  gold: "Workplace Wellness"
+};
+
+let currentMode = 'gnh'; // Default
+let fallbackWords = {}; // Active fallbacks
 
 document.addEventListener('DOMContentLoaded', function () {
   populatePathwaysDropdown();
@@ -70,7 +85,11 @@ function attachModeButtons() {
     currentMode = 'matrice1';
     rerenderColorWords();
   });
-  document.getElementById('englishBtn').addEventListener('click', () => {
+  document.getElementById('matriceBtn').addEventListener('click', () => {
+    currentMode = 'matrice';
+    rerenderColorWords();
+  });
+  document.getElementById('englishWordsBtn').addEventListener('click', () => {
     currentMode = 'english';
     rerenderColorWords();
   });
@@ -98,7 +117,14 @@ function rerenderColorWords() {
   fallbackWords = {};
 
   selectedColors.forEach(colorName => {
-    const fallback = wordModes[currentMode][colorName] || `[${colorName}]`;
+    let fallback = '';
+
+    if (currentMode === 'gnh') {
+      fallback = gnhIndicators[colorName] || `[${colorName}]`;
+    } else {
+      fallback = matriceWords[colorName]?.[currentMode] || `[${colorName}]`;
+    }
+
     fallbackWords[colorName] = fallback;
 
     const wrapper = document.createElement('div');
