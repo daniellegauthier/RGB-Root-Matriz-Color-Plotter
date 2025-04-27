@@ -1,6 +1,6 @@
 // scripts/ui-enhancements.js
 
-// PATHWAYS mapping
+// Pathway to colors mapping
 const pathways = {
   pain: ['gold', 'orange'],
   practical: ['yellow', 'green'],
@@ -13,29 +13,45 @@ const pathways = {
   direct: ['red', 'orange'],
 };
 
-const colorGNH = {
-  grey: 'Economic Wellness',
-  pink: 'Mental Wellness',
-  gold: 'Workplace Wellness',
-  nude: 'Physical Wellness',
-  orange: 'Social Wellness',
-  white: 'Political Wellness',
-  blue: 'Environmental Wellness',
-  green: 'Ecological Diversity',
-  red: 'Health',
-  black: 'Good Governance',
-  brown: 'Education Value',
-  yellow: 'Living Standards',
-  purple: 'Cultural Diversity'
-};
+// Color details including matrice1, english-words, and GNH
+const colorData = [
+  { color: 'grey', matrice1: 'Cover', 'english-words': 'respectful effective apposite precary', gnh: 'Economic Wellness' },
+  { color: 'pink', matrice1: 'Category', 'english-words': 'incredibly exquisite and ambitious', gnh: 'Mental Wellness' },
+  { color: 'gold', matrice1: 'Pull', 'english-words': 'undepartable preflorating technocracy lotiform', gnh: 'Workplace Wellness' },
+  { color: 'nude', matrice1: 'Approach', 'english-words': 'felicitously deft satisfied unextenuable', gnh: 'Physical Wellness' },
+  { color: 'orange', matrice1: 'Hit', 'english-words': 'blurry artesian awesome', gnh: 'Social Wellness' },
+  { color: 'white', matrice1: 'Hope', 'english-words': 'unlavish analeptical', gnh: 'Political Wellness' },
+  { color: 'blue', matrice1: 'Collect', 'english-words': 'daintily perfect, intelligent photopathy', gnh: 'Environmental Wellness' },
+  { color: 'green', matrice1: 'Transition', 'english-words': 'bulbous spontaneous heroic', gnh: 'Ecological Diversity' },
+  { color: 'red', matrice1: 'Limit', 'english-words': 'candid apophantic, distinct and radiant', gnh: 'Health' },
+  { color: 'black', matrice1: 'Order', 'english-words': 'undertreated paleoatavistic obeyable swabble', gnh: 'Good Governance' },
+  { color: 'brown', matrice1: 'Learn', 'english-words': 'abundantly notable and unique submissive', gnh: 'Education Value' },
+  { color: 'yellow', matrice1: 'Structure', 'english-words': 'exhilarating redressible authority plausible', gnh: 'Living Standards' },
+  { color: 'purple', matrice1: 'Free', 'english-words': 'perfectly great - imaginative, brave, gifted', gnh: 'Cultural Diversity' }
+];
 
+// 1️⃣ Global mode variable: matrice1, english-words, gnh
+let currentMode = 'gnh';
+
+// 2️⃣ Handle mode button clicks
+document.getElementById('matrice1Btn').addEventListener('click', () => {
+  currentMode = 'matrice1';
+  rerenderWords();
+});
+document.getElementById('englishBtn').addEventListener('click', () => {
+  currentMode = 'english-words';
+  rerenderWords();
+});
+// Optional: Add a GNH button if needed, otherwise default is GNH
+
+// 3️⃣ Handle pathway selection
+document.getElementById('pathway').addEventListener('change', () => {
+  rerenderWords();
+});
+
+// 4️⃣ Populate dropdown on load
 function populatePathwaysDropdown() {
   const pathwaySelect = document.getElementById('pathway');
-  if (!pathwaySelect) {
-    console.error('Pathway select element not found!');
-    return;
-  }
-  
   Object.keys(pathways).forEach(path => {
     const option = document.createElement('option');
     option.value = path;
@@ -44,19 +60,34 @@ function populatePathwaysDropdown() {
   });
 }
 
-function addTooltips() {
-  const colorElements = document.querySelectorAll('#colorGrid input');
+// 5️⃣ Render words dynamically
+function rerenderWords() {
+  const selectedPathway = document.getElementById('pathway').value;
+  const colorGrid = document.getElementById('colorGrid');
+  colorGrid.innerHTML = '';
 
-  colorElements.forEach(input => {
-    const color = input.getAttribute('data-color');
-    if (color && colorGNH[color]) {
-      input.title = `GNH Indicator: ${colorGNH[color]}`;
-    }
+  if (!selectedPathway) return;
+
+  const selectedColors = pathways[selectedPathway];
+
+  selectedColors.forEach(colorName => {
+    const colorInfo = colorData.find(c => c.color === colorName);
+
+    let word = '';
+    if (currentMode === 'matrice1') word = colorInfo.matrice1;
+    else if (currentMode === 'english-words') word = colorInfo['english-words'];
+    else word = colorInfo.gnh;
+
+    const wrapper = document.createElement('div');
+    wrapper.innerHTML = `
+      <label class="block mb-1">${colorName.toUpperCase()} - <span class="text-gray-600">${word}</span></label>
+      <input type="text" data-color="${colorName}" placeholder="Interpret here..." class="w-full p-2 border rounded" />
+    `;
+    colorGrid.appendChild(wrapper);
   });
 }
 
-// Always wait for full page load!!
+// 6️⃣ Initialize after DOM ready
 document.addEventListener('DOMContentLoaded', function() {
   populatePathwaysDropdown();
-  addTooltips();
 });
