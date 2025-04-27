@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   };
 
   document.getElementById('colorForm').addEventListener('submit', function (e) {
-    e.preventDefault(); // 🚫 stop page reload
+    e.preventDefault(); // stop page reload
 
     const obstacle = document.getElementById('obstacle').value.trim();
     const pathway = document.getElementById('pathway').value.trim();
@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       userInterpretations[color] = input.value || `[no input for ${color}]`;
     });
 
-    // Fetch pathway statement and replace
+    // Fetch pathway statement
     let pathwayOriginal = matriceData[pathway] || "Navigate challenges with strength and grace.";
     let pathwayStatement = replaceColorWordsInPathway(pathwayOriginal, userInterpretations);
 
@@ -74,10 +74,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     resultText += `🌟 Pathway Statement:\n${pathwayStatement}\n\n`;
     resultText += `✨ Color Interpretations:\n\n`;
 
-    // Per color details
+    const selectedColors = [];
     colorInputs.forEach(input => {
       const color = input.getAttribute('data-color');
       const meaning = input.value || '[no input]';
+      selectedColors.push(color);
 
       const similars = (similarityMatrix[color] || []).map(c => capitalizeFirstLetter(c)).join(', ') || 'No similar colors';
       const gnh = gnhIndicators[color] || 'Unknown GNH';
@@ -95,23 +96,22 @@ document.addEventListener('DOMContentLoaded', async () => {
       resultText += `- GNH Sentiment: ${colorSentiment}\n\n`;
     });
 
+    // GNH Indicator Health Only for Used Colors
     resultText += `---\n✨ GNH Indicator Health Analysis:\n`;
-    Object.keys(gnhIndicators).forEach(color => {
+    selectedColors.forEach(color => {
       const gnh = gnhIndicators[color];
-      let status = 'Neutral';
-      if (obstacle.match(new RegExp(gnh, 'i'))) {
-        status = 'Related';
+      if (gnh) {
+        resultText += `- ${gnh}: Related\n`;
       }
-      resultText += `- ${gnh}: ${status}\n`;
     });
 
-    // Output Results
+    // Output results
     document.getElementById('results').classList.remove('hidden');
     document.getElementById('resultContent').innerText = resultText;
   });
 });
 
-// Load the CSV
+// Load CSV file
 function loadMatriceCSV() {
   return fetch('la matrice plus.csv')
     .then(res => res.text())
@@ -128,12 +128,12 @@ function loadMatriceCSV() {
     });
 }
 
-// Properly replace color names inside the text
+// Correctly replace {color} placeholders inside text
 function replaceColorWordsInPathway(originalText, userInputs) {
   let modified = originalText;
 
   Object.keys(userInputs).forEach(color => {
-    const regex = new RegExp(`\\b${color}\\b`, 'gi'); // match whole word
+    const regex = new RegExp(`{${color}}`, 'gi'); // Match {color} placeholders
     modified = modified.replace(regex, userInputs[color]);
   });
 
