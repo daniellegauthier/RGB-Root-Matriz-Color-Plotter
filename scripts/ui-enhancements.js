@@ -1,5 +1,6 @@
 // scripts/ui-enhancements.js
 
+// PATHWAYS mapping
 const pathways = {
   pain: ['gold', 'orange'],
   practical: ['yellow', 'green'],
@@ -28,9 +29,13 @@ const colorGNH = {
   purple: 'Cultural Diversity'
 };
 
-// ➡️ New: Populate dropdown automatically
 function populatePathwaysDropdown() {
   const pathwaySelect = document.getElementById('pathway');
+  if (!pathwaySelect) {
+    console.error('Pathway select element not found!');
+    return;
+  }
+  
   Object.keys(pathways).forEach(path => {
     const option = document.createElement('option');
     option.value = path;
@@ -39,7 +44,6 @@ function populatePathwaysDropdown() {
   });
 }
 
-// ➡️ Existing: Tooltip enhancer
 function addTooltips() {
   const colorElements = document.querySelectorAll('#colorGrid input');
 
@@ -51,8 +55,8 @@ function addTooltips() {
   });
 }
 
-// ➡️ Initialize after DOM ready
-document.addEventListener('DOMContentLoaded', () => {
+// Always wait for full page load!!
+document.addEventListener('DOMContentLoaded', function() {
   populatePathwaysDropdown();
   addTooltips();
 });
