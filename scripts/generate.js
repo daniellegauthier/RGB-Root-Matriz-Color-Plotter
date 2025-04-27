@@ -88,7 +88,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     colorInputs.forEach(input => {
       const color = input.getAttribute('data-color');
-      const meaning = input.value || '[no input]';
+      const meaning = input.value.trim();
+userInterpretations[color] = meaning || fallbackWords[color] || `[no input for ${color}]`;
+
       const similars = (similarityMatrix[color] || []).map(c => capitalizeFirstLetter(c)).join(', ') || 'No similar colors';
       const gnh = gnhIndicators[color]?.label || 'Unknown GNH';
       const description = gnhIndicators[color]?.description || '';
