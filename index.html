@@ -3,28 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RGB Root Matriz Color Plotter</title>
+  <title>RGB Root Matrix Color Plotter</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body class="bg-amber-50 p-6">
-
   <div class="max-w-5xl mx-auto bg-white rounded-lg shadow-lg p-6">
-
-    <!-- Logo -->
     <img src="la matriz consulting logo.png" alt="La Matriz Consulting Logo" class="h-16 mb-6">
-
-    <!-- Heading -->
-    <h1 class="text-3xl font-bold text-brown-700 mb-2">The RGB Root Matriz Color Plotter</h1>
+    <h1 class="text-3xl font-bold text-brown-700 mb-2">The RGB Root Matrix Color Plotter</h1>
     <p class="text-sm mb-6 text-brown-500">by Danielle Gauthier</p>
 
-    <!-- Intro -->
-    <p class="mb-6">
-      Inspired by the ecofeminist pluriverse and poetic navigation programming. Navigate obstacles through color pathways aligned with wellbeing indicators.
-    </p>
-
-    <!-- Version Buttons -->
+    <!-- Mode Switcher -->
     <div class="mb-6 flex space-x-4">
       <button id="matrice1Btn" class="px-4 py-2 bg-brown-600 text-white rounded">Matrice1 Version</button>
       <button id="englishBtn" class="px-4 py-2 bg-green-700 text-white rounded">English Words Version</button>
@@ -33,8 +23,6 @@
 
     <!-- Main Form -->
     <form id="colorForm" class="space-y-6">
-
-      <!-- Obstacle Entry -->
       <div>
         <label class="block mb-2 font-bold">Enter your obstacle:</label>
         <input type="text" id="obstacle" class="w-full p-2 border rounded" placeholder="e.g., fear, uncertainty...">
@@ -42,42 +30,33 @@
         <p id="sentimentScore" class="mt-2 text-brown-500"></p>
       </div>
 
-      <!-- Pathway Selection -->
       <div>
         <label class="block mb-2 font-bold">Select Pathway:</label>
         <select id="pathway" class="w-full p-2 border rounded">
           <option value="">Choose a pathway...</option>
-          <!-- Options populated by JS -->
         </select>
       </div>
 
-      <!-- Dynamic Color Words -->
-      <div id="colorGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <!-- Dynamically generated inputs will appear here -->
-      </div>
+      <div id="colorGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
 
-      <!-- Form Buttons -->
       <div class="flex space-x-4 mt-4">
         <button type="submit" class="px-4 py-2 bg-brown-700 text-white rounded">Generate</button>
         <button type="button" id="saveBtn" class="px-4 py-2 bg-green-700 text-white rounded">Save as PDF</button>
       </div>
-
     </form>
 
-    <!-- Results Output -->
     <div id="results" class="mt-8 hidden">
       <h2 class="text-2xl font-bold mb-4">Results</h2>
       <pre id="resultContent" class="whitespace-pre-wrap bg-amber-100 p-4 rounded"></pre>
     </div>
-
   </div>
 
-  <!-- SCRIPTS -->
+  <!-- Scripts -->
   <script src="jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="scripts/sentiment.js"></script>
   <script src="scripts/export.js"></script>
   <script src="scripts/ui-enhancements.js"></script>
-
+  <script src="scripts/generate.js"></script> <!-- ✅ New file -->
 </body>
 </html>
