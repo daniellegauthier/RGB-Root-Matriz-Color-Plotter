@@ -1,6 +1,5 @@
 // scripts/ui-enhancements.js
 
-// Pathway to colors mapping
 const pathways = {
   pain: ['gold', 'orange'],
   practical: ['yellow', 'green'],
@@ -13,7 +12,6 @@ const pathways = {
   direct: ['red', 'orange'],
 };
 
-// Color details including matrice1, english-words, and GNH
 const colorData = [
   { color: 'grey', matrice1: 'Cover', 'english-words': 'respectful effective apposite precary', gnh: 'Economic Wellness' },
   { color: 'pink', matrice1: 'Category', 'english-words': 'incredibly exquisite and ambitious', gnh: 'Mental Wellness' },
@@ -30,26 +28,15 @@ const colorData = [
   { color: 'purple', matrice1: 'Free', 'english-words': 'perfectly great - imaginative, brave, gifted', gnh: 'Cultural Diversity' }
 ];
 
-// 1️⃣ Global mode variable: matrice1, english-words, gnh
-let currentMode = 'gnh';
+let currentMode = 'gnh'; // default
 
-// 2️⃣ Handle mode button clicks
-document.getElementById('matrice1Btn').addEventListener('click', () => {
-  currentMode = 'matrice1';
-  rerenderWords();
-});
-document.getElementById('englishBtn').addEventListener('click', () => {
-  currentMode = 'english-words';
-  rerenderWords();
-});
-// Optional: Add a GNH button if needed, otherwise default is GNH
-
-// 3️⃣ Handle pathway selection
-document.getElementById('pathway').addEventListener('change', () => {
-  rerenderWords();
+document.addEventListener('DOMContentLoaded', function() {
+  populatePathwaysDropdown();
+  attachModeButtons();
+  attachPathwaySelector();
 });
 
-// 4️⃣ Populate dropdown on load
+// Populates the pathway dropdown
 function populatePathwaysDropdown() {
   const pathwaySelect = document.getElementById('pathway');
   Object.keys(pathways).forEach(path => {
@@ -60,11 +47,30 @@ function populatePathwaysDropdown() {
   });
 }
 
-// 5️⃣ Render words dynamically
-function rerenderWords() {
+// Attach event listeners for mode switching
+function attachModeButtons() {
+  document.getElementById('matrice1Btn').addEventListener('click', () => {
+    currentMode = 'matrice1';
+    rerenderColorWords();
+  });
+  document.getElementById('englishBtn').addEventListener('click', () => {
+    currentMode = 'english-words';
+    rerenderColorWords();
+  });
+}
+
+// Attach event listener for pathway selection
+function attachPathwaySelector() {
+  document.getElementById('pathway').addEventListener('change', () => {
+    rerenderColorWords();
+  });
+}
+
+// Core function to render color inputs and guidance words
+function rerenderColorWords() {
   const selectedPathway = document.getElementById('pathway').value;
   const colorGrid = document.getElementById('colorGrid');
-  colorGrid.innerHTML = '';
+  colorGrid.innerHTML = ''; // clear before re-render
 
   if (!selectedPathway) return;
 
@@ -80,14 +86,11 @@ function rerenderWords() {
 
     const wrapper = document.createElement('div');
     wrapper.innerHTML = `
-      <label class="block mb-1">${colorName.toUpperCase()} - <span class="text-gray-600">${word}</span></label>
+      <label class="block mb-1 font-bold">${colorName.toUpperCase()} 
+        <span class="text-gray-600 text-sm">(${word})</span>
+      </label>
       <input type="text" data-color="${colorName}" placeholder="Interpret here..." class="w-full p-2 border rounded" />
     `;
     colorGrid.appendChild(wrapper);
   });
 }
-
-// 6️⃣ Initialize after DOM ready
-document.addEventListener('DOMContentLoaded', function() {
-  populatePathwaysDropdown();
-});
