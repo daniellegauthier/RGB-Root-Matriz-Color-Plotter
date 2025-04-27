@@ -201,3 +201,19 @@ pre {
 .hidden {
   display: none;
 }
+/* style.css additions */
+.bg-brown-600 {
+  background-color: #6B4226;
+}
+.bg-brown-700 {
+  background-color: #5C3821;
+}
+.text-brown-500 {
+  color: #8B5E3C;
+}
+.text-brown-700 {
+  color: #6B4226;
+}
+.bg-amber-50 {
+  background-color: #FFFBEB;
+}
