@@ -1,18 +1,33 @@
 // scripts/sentiment.js
-document.getElementById('analyzeBtn').addEventListener('click', function() {
-  const text = document.getElementById('obstacle').value.toLowerCase();
-  const positiveWords = ['hope', 'happy', 'joy', 'love', 'peace', 'success', 'achievement', 'trust', 'growth', 'healing'];
-  const negativeWords = ['fear', 'anger', 'sadness', 'pain', 'hurt', 'failure', 'loss', 'doubt', 'hate', 'worry'];
 
-  let score = 5; // neutral starting point
+document.addEventListener('DOMContentLoaded', function () {
+  const obstacleInput = document.getElementById('obstacle');
+  const sentimentScore = document.getElementById('sentimentScore');
+
+  obstacleInput.addEventListener('input', function () {
+    const text = obstacleInput.value.trim();
+    const score = analyzeSentiment(text);
+    sentimentScore.innerText = `Sentiment Score: ${score}/10`;
+  });
+});
+
+// Basic simple sentiment analyzer
+function analyzeSentiment(text) {
+  if (!text) return 5; // Neutral fallback
+
+  const positiveWords = ["hope", "trust", "joy", "gratitude", "love", "resilience", "growth"];
+  const negativeWords = ["fear", "pain", "anger", "sadness", "loss", "doubt", "stress"];
+
+  let score = 5; // Start neutral
+  const lowered = text.toLowerCase();
+
   positiveWords.forEach(word => {
-    if (text.includes(word)) score += 0.5;
+    if (lowered.includes(word)) score += 1;
   });
   negativeWords.forEach(word => {
-    if (text.includes(word)) score -= 0.5;
+    if (lowered.includes(word)) score -= 1;
   });
 
-  score = Math.min(10, Math.max(1, Math.round(score))); // keep between 1-10
-
-  document.getElementById('sentimentScore').innerText = `Sentiment Score: ${score}/10`;
-});
+  // Clamp between 1–10
+  return Math.max(1, Math.min(10, score));
+}
