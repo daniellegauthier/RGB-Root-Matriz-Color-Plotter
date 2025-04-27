@@ -1,34 +1,31 @@
 // scripts/export.js
 
-document.getElementById('saveBtn').addEventListener('click', async function() {
-  const { jsPDF } = window.jspdf;  // Import jsPDF object
+document.addEventListener('DOMContentLoaded', function () {
+  const downloadBtn = document.getElementById('downloadPDF');
 
-  const doc = new jsPDF(); // Create new PDF document
+  downloadBtn.addEventListener('click', function () {
+    const element = document.getElementById('resultContent');
+    
+    if (!element || element.innerText.trim() === '') {
+      alert('Please generate a result before saving!');
+      return;
+    }
 
-  // Load the Logo Image
-  const logoImg = new Image();
-  logoImg.src = 'la matriz consulting logo.png';  // Your logo
-  await new Promise(resolve => {
-    logoImg.onload = resolve;
+    import('https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js')
+      .then(({ default: html2pdf }) => {
+        const opt = {
+          margin:       0.5,
+          filename:     'pathway-report.pdf',
+          image:        { type: 'jpeg', quality: 0.98 },
+          html2canvas:  { scale: 2 },
+          jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+        };
+
+        html2pdf().from(element).set(opt).save();
+      })
+      .catch((err) => {
+        console.error('Error loading html2pdf library', err);
+        alert('PDF download failed. Try again.');
+      });
   });
-
-  // Add Logo Image to PDF
-  doc.addImage(logoImg, 'PNG', 10, 10, 40, 15);
-
-  // Add Main Title
-  doc.setFontSize(18);
-  doc.text('RGB Root Matrix Color Plotter', 60, 20);
-
-  // Add Sentiment Score
-  const sentiment = document.getElementById('sentimentScore').innerText;
-  doc.setFontSize(12);
-  doc.text(sentiment, 60, 28);
-
-  // Add Results Content (Obstacle, Pathway, Colors, GNHs, Answers)
-  const resultText = document.getElementById('resultContent').innerText;
-  const lines = doc.splitTextToSize(resultText, 180); // Line wrapping
-  doc.text(lines, 10, 50);
-
-  // Save the document
-  doc.save('rgb-root-matrix-results.pdf');
 });
