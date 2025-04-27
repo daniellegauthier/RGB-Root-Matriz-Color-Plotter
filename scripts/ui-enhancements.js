@@ -34,9 +34,10 @@ document.addEventListener('DOMContentLoaded', function() {
   populatePathwaysDropdown();
   attachModeButtons();
   attachPathwaySelector();
+  attachGenerateButton();
 });
 
-// Populates the pathway dropdown
+// Populate the dropdown
 function populatePathwaysDropdown() {
   const pathwaySelect = document.getElementById('pathway');
   Object.keys(pathways).forEach(path => {
@@ -47,7 +48,7 @@ function populatePathwaysDropdown() {
   });
 }
 
-// Attach event listeners for mode switching
+// Attach Mode Switching Buttons
 function attachModeButtons() {
   document.getElementById('matrice1Btn').addEventListener('click', () => {
     currentMode = 'matrice1';
@@ -57,20 +58,58 @@ function attachModeButtons() {
     currentMode = 'english-words';
     rerenderColorWords();
   });
+  document.getElementById('gnhBtn').addEventListener('click', () => {
+    currentMode = 'gnh';
+    rerenderColorWords();
+  });
 }
 
-// Attach event listener for pathway selection
+// Attach Pathway Dropdown Change
 function attachPathwaySelector() {
   document.getElementById('pathway').addEventListener('change', () => {
     rerenderColorWords();
   });
 }
 
-// Core function to render color inputs and guidance words
+// Attach Generate Button
+function attachGenerateButton() {
+  document.getElementById('colorForm').addEventListener('submit', function(e) {
+    e.preventDefault(); // stop form from refreshing page
+
+    const obstacle = document.getElementById('obstacle').value;
+    const selectedPathway = document.getElementById('pathway').value;
+    const sentiment = document.getElementById('sentimentScore').innerText;
+
+    let resultsText = `Obstacle: ${obstacle || '[no obstacle entered]'}\n`;
+    resultsText += `Pathway: ${selectedPathway || '[no pathway selected]'}\n`;
+    resultsText += `${sentiment}\n\n`;
+
+    const inputs = document.querySelectorAll('#colorGrid input');
+
+    inputs.forEach(input => {
+      const color = input.getAttribute('data-color');
+      const value = input.value || '[no input]';
+      const colorInfo = colorData.find(c => c.color === color);
+
+      let word = '';
+      if (currentMode === 'matrice1') word = colorInfo.matrice1;
+      else if (currentMode === 'english-words') word = colorInfo['english-words'];
+      else word = colorInfo.gnh;
+
+      resultsText += `${color.toUpperCase()} - ${word}: ${value}\n`;
+    });
+
+    // Show results
+    document.getElementById('results').classList.remove('hidden');
+    document.getElementById('resultContent').innerText = resultsText;
+  });
+}
+
+// Rerender Colors & Guidance Words
 function rerenderColorWords() {
   const selectedPathway = document.getElementById('pathway').value;
   const colorGrid = document.getElementById('colorGrid');
-  colorGrid.innerHTML = ''; // clear before re-render
+  colorGrid.innerHTML = '';
 
   if (!selectedPathway) return;
 
