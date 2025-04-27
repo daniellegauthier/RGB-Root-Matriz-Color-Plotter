@@ -4,10 +4,10 @@ document.addEventListener('DOMContentLoaded', function () {
   const downloadBtn = document.getElementById('downloadPDF');
 
   downloadBtn.addEventListener('click', function () {
-    const resultContent = document.getElementById('results');
+    const resultContent = document.getElementById('resultContent');
     
-    if (!resultContent || resultContent.classList.contains('hidden')) {
-      alert('Please generate a result first!');
+    if (!resultContent || resultContent.innerText.trim() === '') {
+      alert('Please generate a result before saving!');
       return;
     }
 
@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function () {
       margin: 0.5,
       filename: 'pathway-report.pdf',
       image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2 },
+      html2canvas: { scale: 2, useCORS: true },
       jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
     };
 
