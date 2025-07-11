@@ -1,94 +1,25 @@
 // scripts/sentiment.js
 
-// GNH keyword sentiment map
-const gnhSentimentKeywords = {
-  "Mental Wellness": {
-    positive: ["calm", "peaceful", "balanced", "focused", "centered", "relieved"],
-    negative: ["depressed", "anxious", "stressed", "worried", "overwhelmed", "panic", "fear"]
-  },
-  "Health": {
-    positive: ["healthy", "fit", "strong", "healing"],
-    negative: ["sick", "injured", "ill", "pain", "disease", "disabled"]
-  },
-  "Social Wellness": {
-    positive: ["connected", "supported", "belonging", "bond", "friendship"],
-    negative: ["isolated", "lonely", "excluded", "rejected"]
-  },
-  "Physical Wellness": {
-    positive: ["active", "energetic", "fit", "well"],
-    negative: ["tired", "fatigued", "weak", "exhausted"]
-  },
-  "Workplace Wellness": {
-    positive: ["productive", "valued", "motivated", "engaged"],
-    negative: ["burnout", "overworked", "unrecognized", "disengaged"]
-  },
-  "Good Governance": {
-    positive: ["fair", "transparent", "just", "accountable"],
-    negative: ["corrupt", "unfair", "oppressive", "authoritarian"]
-  },
-  "Economic Wellness": {
-    positive: ["stable", "secure", "prosperous", "thriving"],
-    negative: ["broke", "poor", "unstable", "jobless"]
-  },
-  "Cultural Diversity": {
-    positive: ["inclusive", "vibrant", "respected"],
-    negative: ["divided", "intolerant", "erased"]
-  },
-  "Living Standards": {
-    positive: ["comfortable", "secure", "adequate"],
-    negative: ["poverty", "lack", "struggling"]
-  },
-  "Education Value": {
-    positive: ["educated", "skilled", "learned", "knowledgeable"],
-    negative: ["uneducated", "illiterate", "ignorant"]
-  },
-  "Environmental Wellness": {
-    positive: ["sustainable", "clean", "green", "natural"],
-    negative: ["polluted", "dirty", "toxic", "hazardous"]
-  },
-  "Ecological Diversity": {
-    positive: ["biodiverse", "balanced", "rich"],
-    negative: ["destroyed", "degraded", "extinct"]
-  },
-  "Political Wellness": {
-    positive: ["stable", "democratic", "representative"],
-    negative: ["unstable", "oppressive", "dictatorial"]
-  }
-};
+let sentimentAnalyzer;
 
-// Boosted Obstacle Sentiment
+document.addEventListener('DOMContentLoaded', () => {
+  // Initialize Sentiment once
+  sentimentAnalyzer = new Sentiment();
+});
+
+// Analyze entire obstacle string (1–10 scale)
 function analyzeSentiment(text) {
-  const positive = [
-    "hope", "joy", "trust", "growth", "love", "excited", "opportunity", "peace", "clarity", "healing"
-  ];
-  const negative = [
-    "fear", "pain", "worry", "doubt", "hurt", "stress", "depression", "abuse", "hate", "lost"
-  ];
-
-  let score = 5;
-  const lowerText = text.toLowerCase();
-
-  positive.forEach(word => { if (lowerText.includes(word)) score++; });
-  negative.forEach(word => { if (lowerText.includes(word)) score--; });
-
-  // Clamp to 1–10
-  score = Math.max(1, Math.min(10, score));
-  return score;
+  const score = sentimentAnalyzer.analyze(text).score;
+  return Math.max(1, Math.min(10, Math.floor(score + 5)));  // normalize 1–10
 }
 
-// Per-Indicator GNH Analysis
+// Analyze each GNH meaning text as well
 function analyzeGNHMeaning(meaning, indicatorLabel) {
-  const cleanText = meaning.toLowerCase();
+  const score = sentimentAnalyzer.analyze(meaning).score;
+  let sentiment = 'Neutral';
 
-  const indicator = gnhSentimentKeywords[indicatorLabel];
-  if (!indicator) return { sentiment: 'Neutral', score: 5 };
+  if (score > 1) sentiment = 'Positive';
+  else if (score < -1) sentiment = 'Negative';
 
-  const negativeMatch = indicator.negative.some(word => cleanText.includes(word));
-  const positiveMatch = indicator.positive.some(word => cleanText.includes(word));
-
-  if (positiveMatch && !negativeMatch) return { sentiment: 'Positive', score: 8 };
-  if (negativeMatch && !positiveMatch) return { sentiment: 'Negative', score: 3 };
-  if (positiveMatch && negativeMatch) return { sentiment: 'Mixed', score: 5 };
-
-  return { sentiment: 'Neutral', score: 5 };
+  return { sentiment, score: Math.max(1, Math.min(10, Math.floor(score + 5))) };
 }
