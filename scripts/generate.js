@@ -54,7 +54,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const obstacle = document.getElementById('obstacle').value.trim();
     const pathway = document.getElementById('pathway').value.trim();
     const sentiment = document.getElementById('sentimentScore').innerText || 'Sentiment Score: [not analyzed]';
-    const sentimentScore = parseInt(sentiment.match(/\d+/)) || 5;
+    const sentimentScore = analyzeSentiment(obstacle);
+document.getElementById('sentimentScore').innerText = `Sentiment Score: ${sentimentScore}/10`;
+    const gnhAnalysis = analyzeGNHMeaning(meaning, gnh);
+resultText += `- GNH Sentiment: ${gnhAnalysis.sentiment} (${gnhAnalysis.score}/10)\n\n`;
+
 
     if (!pathway) {
       alert('Please select a pathway.');
