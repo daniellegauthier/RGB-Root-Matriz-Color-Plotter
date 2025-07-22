@@ -56,8 +56,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const sentiment = document.getElementById('sentimentScore').innerText || 'Sentiment Score: [not analyzed]';
     const sentimentScore = analyzeSentiment(obstacle);
 document.getElementById('sentimentScore').innerText = `Sentiment Score: ${sentimentScore}/10`;
-    const gnhAnalysis = analyzeGNHMeaning(meaning, gnh);
-resultText += `- GNH Sentiment: ${gnhAnalysis.sentiment} (${gnhAnalysis.score}/10)\n\n`;
+
+
+
 
 
     if (!pathway) {
@@ -71,6 +72,18 @@ resultText += `- GNH Sentiment: ${gnhAnalysis.sentiment} (${gnhAnalysis.score}/1
       const color = input.getAttribute('data-color');
       const meaning = input.value.trim();
       userInterpretations[color] = meaning || fallbackWords[color] || `[no input for ${color}]`;
+
+      // After building userInterpretations...
+const gnhScores = await getGnhScores(Object.values(userInterpretations).join(" "));
+
+for (let color of Object.keys(userInterpretations)) {
+  const meaning = userInterpretations[color];
+  const domain = /* map color ⇒ GNH label */;
+  const similarity = gnhScores[domain] || 0;
+  const score10 = Math.round(similarity * 9) + 1;
+  const sentiment = score10 >= 6 ? "Positive" : score10 <= 4 ? "Negative" : "Neutral";
+  resultText += `- GNH Sentiment: ${sentiment} (${score10}/10)\n\n`;
+}
     });
 
     // Fetch original pathway statement
