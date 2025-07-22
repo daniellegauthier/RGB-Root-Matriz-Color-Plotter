@@ -48,109 +48,74 @@ document.addEventListener('DOMContentLoaded', () => {
     purple: { label: 'Cultural Diversity' }
   };
 
-  document.getElementById('colorForm').addEventListener('submit', function (e) {
-    e.preventDefault(); // prevent reload
+  document.getElementById('colorForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
 
     const obstacle = document.getElementById('obstacle').value.trim();
     const pathway = document.getElementById('pathway').value.trim();
-    const sentiment = document.getElementById('sentimentScore').innerText || 'Sentiment Score: [not analyzed]';
     const sentimentScore = analyzeSentiment(obstacle);
-document.getElementById('sentimentScore').innerText = `Sentiment Score: ${sentimentScore}/10`;
-
-
-
-
+    document.getElementById('sentimentScore').innerText = `Sentiment Score: ${sentimentScore}/10`;
 
     if (!pathway) {
       alert('Please select a pathway.');
       return;
     }
 
-    // Build userInterpretations, using fallback if input is empty
+    // Build meanings
     const userInterpretations = {};
     document.querySelectorAll('#colorGrid input').forEach(input => {
       const color = input.getAttribute('data-color');
       const meaning = input.value.trim();
       userInterpretations[color] = meaning || fallbackWords[color] || `[no input for ${color}]`;
-
-      // After building userInterpretations...
-const gnhScores = await getGnhScores(Object.values(userInterpretations).join(" "));
-
-for (let color of Object.keys(userInterpretations)) {
-  const meaning = userInterpretations[color];
-  const domain = /* map color ⇒ GNH label */;
-  const similarity = gnhScores[domain] || 0;
-  const score10 = Math.round(similarity * 9) + 1;
-  const sentiment = score10 >= 6 ? "Positive" : score10 <= 4 ? "Negative" : "Neutral";
-  resultText += `- GNH Sentiment: ${sentiment} (${score10}/10)\n\n`;
-}
     });
 
-    // Fetch original pathway statement
-    let pathwayOriginal = pathwayStatements[pathway] || "Pathway statement not available.";
-    let pathwayStatement = replacePathwayColorsWithInputs(pathwayOriginal, userInterpretations);
-
-    // Tone Adjustment
-    if (sentimentScore <= 3) {
-      pathwayStatement = "Despite difficulties, " + pathwayStatement;
-    } else if (sentimentScore >= 8) {
-      pathwayStatement = "With hope and resilience, " + pathwayStatement;
-    }
-
+    // Prepare base result text
     let resultText = `🌿 Obstacle: ${obstacle || '[none entered]'}\n`;
     resultText += `🌿 Selected Pathway: ${capitalizeFirstLetter(pathway)}\n`;
-    resultText += `🌿 ${sentiment}\n\n`;
+    resultText += `🌿 Sentiment Score: ${sentimentScore}/10\n\n`;
 
-    resultText += `🌟 Pathway Statement:\n${pathwayStatement}\n\n`;
-    resultText += `✨ Color Interpretations:\n\n`;
+    // Pathway statement with tone
+    let statement = replacePathwayColorsWithInputs(pathwayStatements[pathway] || '', userInterpretations);
+    if (sentimentScore <= 3) statement = "Despite difficulties, " + statement;
+    else if (sentimentScore >= 8) statement = "With hope and resilience, " + statement;
+    resultText += `🌟 Pathway Statement:\n${statement}\n\n✨ Color Interpretations:\n\n`;
 
-    document.querySelectorAll('#colorGrid input').forEach(input => {
-      const color = input.getAttribute('data-color');
-      const meaning = userInterpretations[color];
-      const similars = (similarityMatrix[color] || []).map(c => capitalizeFirstLetter(c)).join(', ') || 'No similar colors';
-      const gnh = gnhIndicators[color]?.label || 'Unknown GNH';
-
-      let colorSentiment = 'Neutral';
-      if (meaning.match(/hope|joy|trust|growth|healing/gi)) {
-        colorSentiment = 'Positive';
-      } else if (meaning.match(/fear|pain|worry|doubt|hurt/gi)) {
-        colorSentiment = 'Negative';
-      }
-
-      resultText += `🔸 ${capitalizeFirstLetter(color)} (${gnh})\n`;
-      resultText += `- Your Meaning: ${meaning}\n`;
-      resultText += `- Similar Colors: ${similars}\n`;
-      resultText += `- GNH Sentiment: ${colorSentiment}\n\n`;
+    // Add color blocks
+    Object.entries(userInterpretations).forEach(([color, meaning]) => {
+      const similars = (similarityMatrix[color] || []).map(c => capitalizeFirstLetter(c)).join(', ');
+      const gnhLabel = gnhIndicators[color]?.label || 'Unknown';
+      resultText += `🔸 ${capitalizeFirstLetter(color)} (${gnhLabel})\n- Your Meaning: ${meaning}\n- Similar Colors: ${similars}\n`;
     });
 
+    // NOW: get GNH semantic scores
+    try {
+      const meaningsString = Object.values(userInterpretations).join(' ');
+      const gnhScores = await getGnhScores(meaningsString);
+
+      Object.keys(userInterpretations).forEach(color => {
+        const label = gnhIndicators[color]?.label;
+        const sim = gnhScores[label] || 0;
+        const score10 = Math.round(sim * 9) + 1;
+        const sentiment = score10 >= 6 ? 'Positive' : score10 <= 4 ? 'Negative' : 'Neutral';
+        resultText += `- GNH Sentiment: ${sentiment} (${score10}/10)\n\n`;
+      });
+    } catch(err) {
+      console.error('GNH scoring failed', err);
+      resultText += '\n⚠️ GNH analysis failed – try again later.\n';
+    }
+
+    // Render results
     document.getElementById('results').classList.remove('hidden');
     document.getElementById('resultContent').innerText = resultText;
-    // Fill hidden pdfContent
-const pdfContent = document.getElementById('pdfContent');
-pdfContent.innerHTML = `
-  <div style="text-align:center;">
-    <img src="${document.getElementById('pathwayImage').src}" style="max-width: 300px; margin-bottom: 20px;" />
-  </div>
-  <pre style="font-family:inherit; white-space:pre-wrap;">${resultText}</pre>
-`;
-pdfContent.classList.remove('hidden');
 
+    // Setup PDF export
+    const pdfContent = document.getElementById('pdfContent');
+    pdfContent.innerHTML = `
+      <div style="text-align:center;">
+        <img src="${document.getElementById('pathwayImage').src}" style="max-width:300px;margin-bottom:20px;" />
+      </div>
+      <pre style="white-space:pre-wrap;">${resultText}</pre>`;
+    pdfContent.classList.remove('hidden');
     document.getElementById('downloadPDF').classList.remove('hidden');
   });
 });
-
-// Correctly replace full "color-pathway" words with user meanings
-function replacePathwayColorsWithInputs(text, userInputs) {
-  let modified = text;
-
-  Object.keys(userInputs).forEach(color => {
-    const regex = new RegExp(`${color}-pathway`, 'gi');
-    modified = modified.replace(regex, userInputs[color]);
-  });
-
-  return modified;
-}
-
-function capitalizeFirstLetter(string) {
-  return string.charAt(0).toUpperCase() + string.slice(1);
-}
