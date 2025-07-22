@@ -1,4 +1,6 @@
 // scripts/generate.js
+import { analyzeSentiment } from './sentiment.js';
+import { getGnhScores } from './gnhSemantic.js';
 
 document.addEventListener('DOMContentLoaded', () => {
 
