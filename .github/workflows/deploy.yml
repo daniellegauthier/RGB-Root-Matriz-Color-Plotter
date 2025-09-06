@@ -21,24 +21,39 @@ jobs:
           KEY: ${{ secrets.HF_SSH_KEY }}
           PASSPHRASE: ${{ secrets.HF_SSH_PASSPHRASE }}
         run: |
-          set -e
+          set -euo pipefail
           mkdir -p ~/.ssh && chmod 700 ~/.ssh
           printf "%s\n" "$KEY" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
 
-          # create minimal askpass script
+          # Askpass shim to feed the passphrase to ssh-agent non-interactively
           printf '#!/usr/bin/env bash\necho "$PASSPHRASE"\n' > /tmp/askpass.sh
           chmod +x /tmp/askpass.sh
 
           eval "$(ssh-agent -s)"
           SSH_ASKPASS=/tmp/askpass.sh DISPLAY=:0 setsid ssh-add ~/.ssh/id_ed25519
 
-          ssh-keyscan huggingface.co >> ~/.ssh/known_hosts
-          chmod 644 ~/.ssh/known_hosts
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
 
-      - name: Push to Hugging Face Space
+      - name: Trust huggingface.co host key (non-fatal)
         run: |
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          # Avoid failing the job if ssh-keyscan has a transient hiccup
+          ssh-keyscan -T 10 huggingface.co >> ~/.ssh/known_hosts 2>/dev/null || true
+          chmod 644 ~/.ssh/known_hosts
+
+      - name: Sanity check SSH connectivity
+        run: |
+          set -x
+          # Should print a welcome message and exit. Non-zero here is a clear signal.
+          ssh -o StrictHostKeyChecking=accept-new -T git@huggingface.co || true
+
+      - name: Push to Hugging Face Space
+        env:
+          # Show verbose SSH if needed for troubleshooting
+          GIT_SSH_COMMAND: "ssh -o StrictHostKeyChecking=accept-new -o ServerAliveInterval=30"
+        run: |
+          git remote remove hf 2>/dev/null || true
           git remote add hf git@huggingface.co:spaces/daniellegauthier/RGB-Root-Matriz-Color-Plotter
           git push -f hf main
