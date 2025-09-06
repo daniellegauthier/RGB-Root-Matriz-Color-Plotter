@@ -18,4 +18,4 @@ jobs:
         with:
           repo-type: space
           space-id: daniellegauthier/RGB-Root-Matriz-Color-Plotter 
-          huggingface_token: ${{ secrets.HF_TOKEN }}  # 👈 securely inject the token
+          huggingface_token: ${{ secrets.SYNC_TO_HUGGING_FACE_HUB }}  # 👈 securely inject the token
