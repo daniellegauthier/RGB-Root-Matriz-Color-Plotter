@@ -26,6 +26,6 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          REPO_URL="https://daniellegauthier:${HF_TOKEN}@huggingface.co/spaces/daniellegauthier/RGB-Root-Matriz-Color-Plotter"
-          git remote add hf "$REPO_URL"
+          echo "Adding Hugging Face remote with token..."
+          git remote add hf https://daniellegauthier:${HF_TOKEN}@huggingface.co/spaces/daniellegauthier/RGB-Root-Matriz-Color-Plotter
           git push -f hf main
