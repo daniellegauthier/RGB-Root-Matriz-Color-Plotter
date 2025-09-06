@@ -1,0 +1,21 @@
+name: Deploy to Hugging Face Space 🚀
+
+on:
+  push:
+    branches:
+      - main  # or your chosen branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v3
+
+      - name: Deploy to Hugging Face Space
+        uses: huggingface/huggingface_hub@v0.18.0
+        with:
+          repo-type: space
+          space-id: daniellegauthier/RGB-Root-Matriz-Color-Plotter 
+          huggingface_token: ${{ secrets.HF_TOKEN }}  # 👈 securely inject the token
