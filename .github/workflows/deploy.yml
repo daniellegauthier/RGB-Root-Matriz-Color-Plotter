@@ -1,4 +1,4 @@
-name: Sync to Hugging Face hub 🚀
+name: Deploy to Hugging Face via SSH
 
 on:
   push:
@@ -6,26 +6,23 @@ on:
   workflow_dispatch:
 
 jobs:
-  sync-to-hub:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-          lfs: true
 
-      - name: Set Git identity
+      - name: Set up SSH
         run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.HF_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan huggingface.co >> ~/.ssh/known_hosts
           git config --global user.name "GitHub Actions"
-          git config --global user.email "github-actions@github.com"
-          git config --global credential.helper ""
+          git config --global user.email "actions@github.com"
 
       - name: Push to Hugging Face Space
-        env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          echo "Adding Hugging Face remote with token..."
-          git remote add hf https://daniellegauthier:${HF_TOKEN}@huggingface.co/spaces/daniellegauthier/RGB-Root-Matriz-Color-Plotter
+          git remote add hf git@huggingface.co:spaces/daniellegauthier/RGB-Root-Matriz-Color-Plotter
           git push -f hf main
