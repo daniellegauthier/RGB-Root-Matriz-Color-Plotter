@@ -1,21 +1,30 @@
-name: Deploy to Hugging Face Space 🚀
+name: Sync to Hugging Face hub
 
 on:
   push:
-    branches:
-      - main  # or your chosen branch
+    branches: [main]  # Adjust if your branch is not 'main'
+
+  workflow_dispatch:  # Allows manual triggering from GitHub UI
 
 jobs:
-  deploy:
+  sync-to-hub:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout the repo
+      - name: Checkout repo
         uses: actions/checkout@v3
-
-      - name: Deploy to Hugging Face Space
-        uses: huggingface/huggingface_hub@v0.18.0
         with:
-          repo-type: space
-          space-id: daniellegauthier/RGB-Root-Matriz-Color-Plotter 
-          huggingface_token: ${{ secrets.SYNC_TO_HUGGING_FACE_HUB }}  # 👈 securely inject the token
+          fetch-depth: 0
+          lfs: true  # If you're using large files
+
+      - name: Set Git identity
+        run: |
+          git config --global user.email "github-actions@github.com"
+          git config --global user.name "github-actions"
+
+      - name: Push to Hugging Face Space
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          git remote add hf https://daniellegauthier:$HF_TOKEN@huggingface.co/spaces/daniellegauthier/RGB-Root-Matriz-Color-Plotter
+          git push -f hf main  # Force push to overwrite if needed
