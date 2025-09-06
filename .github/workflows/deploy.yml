@@ -1,4 +1,4 @@
-name: Deploy to Hugging Face via SSH
+name: Deploy to Hugging Face via SSH (passphrase key)
 
 on:
   push:
@@ -10,22 +10,29 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
           lfs: true
 
-      # Load your private key into an SSH agent (no echo/heredoc quirks)
-      - name: Start SSH agent and add key
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.HF_SSH_KEY }}
-
-      - name: Trust huggingface.co host key
+      - name: Install key and unlock with passphrase
+        env:
+          KEY: ${{ secrets.HF_SSH_KEY }}
+          PASSPHRASE: ${{ secrets.HF_SSH_PASSPHRASE }}
         run: |
-          mkdir -p ~/.ssh
-          chmod 700 ~/.ssh
+          set -e
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          printf "%s\n" "$KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+
+          # create minimal askpass script
+          printf '#!/usr/bin/env bash\necho "$PASSPHRASE"\n' > /tmp/askpass.sh
+          chmod +x /tmp/askpass.sh
+
+          eval "$(ssh-agent -s)"
+          SSH_ASKPASS=/tmp/askpass.sh DISPLAY=:0 setsid ssh-add ~/.ssh/id_ed25519
+
           ssh-keyscan huggingface.co >> ~/.ssh/known_hosts
           chmod 644 ~/.ssh/known_hosts
           git config --global user.name "GitHub Actions"
