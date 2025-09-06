@@ -1,13 +1,31 @@
-- name: Set Git identity
-  run: |
-    git config --global user.name "GitHub Actions"
-    git config --global user.email "github-actions@github.com"
-    git config --global credential.helper ""
+name: Sync to Hugging Face hub 🚀
 
-- name: Push to Hugging Face Space
-  env:
-    HF_TOKEN: ${{ secrets.HF_TOKEN }}
-  run: |
-    REPO_URL="https://daniellegauthier:${HF_TOKEN}@huggingface.co/spaces/daniellegauthier/RGB-Root-Matriz-Color-Plotter"
-    git remote add hf "$REPO_URL"
-    git push -f hf main
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  sync-to-hub:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          lfs: true
+
+      - name: Set Git identity
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "github-actions@github.com"
+          git config --global credential.helper ""
+
+      - name: Push to Hugging Face Space
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          REPO_URL="https://daniellegauthier:${HF_TOKEN}@huggingface.co/spaces/daniellegauthier/RGB-Root-Matriz-Color-Plotter"
+          git remote add hf "$REPO_URL"
+          git push -f hf main
